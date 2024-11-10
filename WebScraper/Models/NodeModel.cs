@@ -11,7 +11,7 @@ namespace WebScraper.Models
     {
         public NodeType Type { get; set; }
         public string Content { get; set; }
-        public string? Src { get; set; }
+        public string? Link { get; set; }
         public bool Italic { get; set; } = false;
         public bool Bold { get; set; } = false;
         public bool Underline { get; set; } = false;

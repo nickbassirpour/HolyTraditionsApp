@@ -76,7 +76,6 @@ namespace WebScraper.Helpers
 
             string currentLink = null;
 
-            string sr
 
             foreach (var textPart in textParts)
             {
@@ -122,7 +121,12 @@ namespace WebScraper.Helpers
                 HtmlNode modifiedNode = tempDoc.DocumentNode.FirstChild;
                 if (modifiedNode.Attributes["src"] != null)
                 {
-
+                    resultList.Add(new ImageNodeModel
+                    {
+                        Src = modifiedNode.Attributes["src"].Value,
+                        AltText = modifiedNode?.Attributes["alt"].Value,
+                        //Caption = modifiedNode.
+                    });
                 }
 
                 if (string.IsNullOrWhiteSpace(modifiedNode.InnerText)) continue;
