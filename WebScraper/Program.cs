@@ -11,9 +11,8 @@ void Scrape(string url)
 {
     WebScraperService webScraper = new WebScraperService(url);
 
-    string relatedArticles = webScraper.GetRelatedArticles();
-    Console.WriteLine(relatedArticles);
+    webScraper.GetBody();
 }
 
-Scrape("https://traditioninaction.org/HotTopics/i99ht_177_Dri.html");
+Scrape("https://traditioninaction.org/SOD/j201sd_OLMediatrix_11-8.html");
 

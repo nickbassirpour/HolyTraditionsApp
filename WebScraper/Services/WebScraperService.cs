@@ -43,7 +43,19 @@ namespace WebScraper.Services
         }
         public void GetBody()
         {
-
+            HtmlNodeCollection bodyList = _htmlDoc.DocumentNode.SelectNodes("//*[@id='R']");
+            
+            List<List<NodeModel>> parsedBody = new List<List<NodeModel>>();
+            foreach (var body in bodyList)
+            {
+                var cleanedBody = body.InnerHtml.Split("<!-- Add")[0];
+                HtmlDocument tempDoc = new HtmlDocument();
+                tempDoc.LoadHtml($"<div>{ cleanedBody} </div>");
+                HtmlNode modifiedNode = tempDoc.DocumentNode.FirstChild;
+                HtmlParsingHelper.ParseBody(modifiedNode);
+                
+            }
+            //return HtmlParsingHelper.ParseBody(body);
         }
 
         public void GetSource()
@@ -68,10 +80,10 @@ namespace WebScraper.Services
             return date.InnerText.Trim();
         }
 
-        public List<NodeModel> GetRelatedArticles()
-        {
-            var relatedArticles = _htmlDoc.DocumentNode.SelectSingleNode("//ul[@class='relatedlist']");
-            return HtmlParsingHelper.ParseLinks(relatedArticles);
-        }
+        //public List<NodeModel> GetRelatedArticles()
+        //{
+        //    var relatedArticles = _htmlDoc.DocumentNode.SelectSingleNode("//ul[@class='relatedlist']");
+        //    return HtmlParsingHelper.ParseLinks(relatedArticles);
+        //}
     }
 }
