@@ -9,6 +9,6 @@ namespace WebScraper.Models
     internal class ImageNodeModel : NodeModel
     {
         public string? AltText { get; set; }
-        public NodeModel? ImageText {  get; set; }   
+        public List<NodeModel>? ImageText {  get; set; }   
     }
 }

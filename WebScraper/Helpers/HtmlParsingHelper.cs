@@ -95,9 +95,13 @@ namespace WebScraper.Helpers
                 {
                     articleNodes.Add(ParseImageNode(childNode));
                 }
-                else if (childNode.Name == "a" || childNode.InnerHtml.Contains("<a"))
+                if (childNode.Name == "a" || childNode.InnerHtml.Contains("<a"))
                 {
                     articleNodes.Add(ParseLinkNode(childNode));
+                }
+                if (childNode.InnerHtml.Contains("<li>"))
+                {
+                    ParseLiElementNode(childNode);    
                 }
                 else
                 {
@@ -107,6 +111,7 @@ namespace WebScraper.Helpers
             return articleNodes;
         }
 
+
         private static ImageNodeModel ParseImageNode(HtmlNode cleanedNode)
         {
             HtmlNode imgNode = cleanedNode.SelectSingleNode("//img[@src]");
@@ -115,7 +120,7 @@ namespace WebScraper.Helpers
             return new ImageNodeModel
             {
                 Type = NodeType.Image,
-                ImageText = ParseTextNode(contentNode),
+                ImageText = ParseParagraphNodes(contentNode.ChildNodes),
                 Link = imgNode.GetAttributeValue("src", null),
                 AltText = imgNode.GetAttributeValue("alt", null),
             };
@@ -145,6 +150,11 @@ namespace WebScraper.Helpers
             if (node.OuterHtml.Contains("<i>") || node.OuterHtml.Contains("<em>")) italic = true;
             if (node.OuterHtml.Contains("<u>")) underline = true;
             return (bold, italic, underline);
+        }
+        private static void ParseLiElementNode(HtmlNode childNode)
+        {
+            HtmlNode liNode = childNode.SelectSingleNode("//li");
+            ParseParagraphNodes(liNode.ChildNodes);
         }
 
         private static NodeModel ParseTextNode(HtmlNode nonEmptyHtmlNode)
