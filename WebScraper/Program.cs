@@ -14,5 +14,5 @@ void Scrape(string url)
     webScraper.GetBody();
 }
 
-Scrape("https://traditioninaction.org/SOD/j201sd_OLMediatrix_11-8.html");
+Scrape("https://traditioninaction.org/bev/298bev11_08_2024.htm");
 
