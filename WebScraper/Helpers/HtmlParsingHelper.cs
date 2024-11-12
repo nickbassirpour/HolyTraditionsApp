@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -31,14 +32,98 @@ namespace WebScraper.Helpers
             return resultList;
         }
 
-        internal static void ParseBody(HtmlNode body)
+        internal static void ParseBody(HtmlNode node)
         {
-            var textParts = Regex.Split(body.InnerHtml, "<br>");
-            List<string> cleanedTextParts = new List<string>();  
-            foreach (var part in textParts)
+            List<HtmlNode> cleanedNodes = new List<HtmlNode>();
+            var nodes = node.ChildNodes;
+
+            for (int i = 0; i < nodes.Count; i++)
             {
-                if (!String.IsNullOrWhiteSpace(part) && part != "<br>" ) cleanedTextParts.Add(part.Trim());
+                if (!string.IsNullOrEmpty(nodes[i].InnerText.Trim())) cleanedNodes.Add(nodes[i]);
             }
+
+            List<NodeModel> articleNodes = new List<NodeModel>();   
+            foreach (HtmlNode cleanedNode in cleanedNodes)
+            {
+                bool italic = false;
+                bool bold = false;
+                bool underline = false;
+                NodeType type = NodeType.Text;
+
+                string? src = "";
+                string altText = "";
+                NodeModel caption = null;
+
+                if (cleanedNode.Name == "img" || cleanedNode.InnerHtml.Contains("<img"))
+                {
+                    type = NodeType.Image;
+                    src = cleanedNode.SelectSingleNode("//img/@src").ToString();
+                    altText = cleanedNode.GetAttributeValue("alt", "");
+                    caption = (new NodeModel
+                    {
+                        Content = cleanedNode.InnerText
+                    });
+
+                    articleNodes.Add(new ImageNodeModel
+                    {
+                        Type = type,
+                        Content = cleanedNode.InnerText,
+                        Src = src,
+                        AltText = altText,
+                        Caption = caption,
+                        Italic = italic,
+                        Bold = bold,
+                        Underline = underline
+                    });
+                } 
+                else
+                {
+                    if (cleanedNode.Name == "i" || cleanedNode.Name == "em")
+                    {
+                        italic = true;
+                    }
+                    if (cleanedNode.Name == "b" || cleanedNode.Name == "strong" || cleanedNode.InnerHtml.Contains("<b>"))
+                    {
+                        bold = true;
+                    }
+                    if (cleanedNode.Name == "u")
+                    {
+                        underline = true;
+                    }
+
+                    articleNodes.Add(new NodeModel
+                    {
+                        Type = type,
+                        Content = cleanedNode.InnerText,
+                        Italic = italic,
+                        Bold = bold,
+                        Underline = underline
+                    });
+
+                }
+
+                italic = false;
+                bold = false;
+                italic = false;
+                type = NodeType.Text;
+            }
+
+            foreach (NodeModel articleNode in articleNodes)
+            {
+                Console.WriteLine(JsonSerializer.Serialize(articleNode, new JsonSerializerOptions { WriteIndented = true }));
+            }
+
+            //foreach (var node in parsedNodes)
+            //{
+            //    var jsonString = JsonSerializer.Serialize(node, new JsonSerializerOptions { WriteIndented = true });
+            //    Console.WriteLine(jsonString);
+            //}
+            //var textParts = Regex.Split(body.InnerHtml, "<br>");
+            //List<string> cleanedTextParts = new List<string>();  
+            //foreach (var part in textParts)
+            //{
+            //    if (!String.IsNullOrWhiteSpace(part) && part != "<br>" ) cleanedTextParts.Add(part.Trim());
+            //}
 
             //List<string> pureNodes = new List<string>();    
             //foreach (var cleanedPart in cleanedTextParts)
@@ -52,17 +137,17 @@ namespace WebScraper.Helpers
             //    }
             //}
 
-            List<NodeModel> parsedNodes = new List<NodeModel>();
-            for (int i = 0; i < cleanedTextParts.Count; i++)
-            {
-                ParseNode(cleanedTextParts[i], parsedNodes);
-            }
+            //List<NodeModel> parsedNodes = new List<NodeModel>();
+            //for (int i = 0; i < cleanedTextParts.Count; i++)
+            //{
+            //    ParseNode(cleanedTextParts[i], parsedNodes);
+            //}
 
-            foreach (var node in parsedNodes)
-            {
-                var jsonString = JsonSerializer.Serialize(node, new JsonSerializerOptions { WriteIndented = true });
-                Console.WriteLine(jsonString);
-            }
+            //foreach (var node in parsedNodes)
+            //{
+            //    var jsonString = JsonSerializer.Serialize(node, new JsonSerializerOptions { WriteIndented = true });
+            //    Console.WriteLine(jsonString);
+            //}
         }
 
         internal static void ParseNode(string liNodeText, List<NodeModel> resultList)

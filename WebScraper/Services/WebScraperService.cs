@@ -50,33 +50,8 @@ namespace WebScraper.Services
             splitBody.LoadHtml(body.InnerHtml.Split("<!-- Add")[0]);
             HtmlNode splitBodyHtmlNode = splitBody.DocumentNode;
 
-            //HtmlNode? commentNode = _htmlDoc.DocumentNode.Descendants().FirstOrDefault(n => n.InnerHtml.Contains("<-- Add"));
+            HtmlParsingHelper.ParseBody(splitBodyHtmlNode);
 
-            //if (commentNode != null)
-            //{
-            //    commentNode.Remove();
-
-            //    HtmlNode sibling = commentNode.NextSibling;
-            //    while (sibling != null)
-            //    {
-            //        HtmlNode nextSibling = sibling.NextSibling;
-            //        sibling.Remove();
-            //        sibling = nextSibling;
-            //    }
-            //}
-            List<HtmlNode> cleanedNodes = new List<HtmlNode>();
-            var nodes = splitBodyHtmlNode.ChildNodes;
-
-            for (int i = 0; i < nodes.Count; i++) 
-            {
-                if (!string.IsNullOrEmpty(nodes[i].InnerText.Trim())) cleanedNodes.Add(nodes[i]);
-            }
-
-            for (int i = 0;i < cleanedNodes.Count; i++)
-            {
-                Console.WriteLine(i.ToString() + ") " + cleanedNodes[i].InnerHtml);
-            }
-            List<List<NodeModel>> parsedBody = new List<List<NodeModel>>();
 
             //foreach (var body in bodyList)
             //{
