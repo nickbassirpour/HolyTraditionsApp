@@ -14,7 +14,7 @@ namespace WebScraper.Models
         public string Body { get; set; }
         public string? Source { get; set; }
         public string? Continued { get; set; }
-        public string Footnotes { get; set; }
+        public List<NodeModel> Footnotes { get; set; }
         public string? Date { get; set; }
         public string? RelatedArticles { get; set; }
     }

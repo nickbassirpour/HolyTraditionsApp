@@ -14,6 +14,18 @@ namespace WebScraper.Services
             _htmlDoc = web.Load(url);
         }
 
+        public ArticleModel ScrapeArticle()
+        {
+            ArticleModel articleModel = new ArticleModel();
+            articleModel.Author = GetAuthor();
+            articleModel.Title = GetTitle();
+            articleModel.Topic = GetTopic();
+            //articleModel.Source = GetSource();
+            articleModel.Series = GetSeries();
+            articleModel.Date = GetDate();
+            return articleModel;
+        }
+
         public string GetTopic()
         {
             HtmlNode? topic = _htmlDoc.DocumentNode.Descendants().FirstOrDefault(node => node.Id == "topicHeader" || node.Element("h3") != null);
