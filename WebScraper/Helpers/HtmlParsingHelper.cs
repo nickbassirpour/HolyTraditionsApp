@@ -36,139 +36,25 @@ namespace WebScraper.Helpers
 
         internal static void ParseBody(HtmlNode node)
         {
-            List<HtmlNode> nonEmptyNodes = SplitParagraphs(node);
-
-            List<List<NodeModel>> articleNodes = new List<List<NodeModel>>();   
-            foreach (HtmlNode nonEmptyNode in nonEmptyNodes)
-            {
-                articleNodes.Add(ParseParagraphNodes(nonEmptyNode.ChildNodes));
-            }
-
-            foreach (List<NodeModel> articleNode in articleNodes)
-            {
-                Console.WriteLine(JsonSerializer.Serialize(articleNode, new JsonSerializerOptions { WriteIndented = true }));
-            }
-
+            FixLinks(node);
+            FixImageUrls(node);
         }
 
-        private static List<HtmlNode> SplitParagraphs(HtmlNode node)
+        internal static void FixLinks(HtmlNode htmlBody)
         {
-            List<string> htmlParts = node.InnerHtml.Split("<br><br>").ToList();
-            List<string> cleanedHtmlParts = new List<string>(); 
-            foreach(string htmlPart in htmlParts) 
-            {
-                cleanedHtmlParts.Add(CleanText(htmlPart));
-            };
-
-            List<HtmlNode> nonEmptyHtmlNodes = RevertNodesToHtml(cleanedHtmlParts);
-
-            return nonEmptyHtmlNodes;
+            HtmlNodeCollection linkNodes = htmlBody.SelectNodes("//a[@href]");
         }
-
-        private static string CleanText(string text)
+        internal static void FixImageUrls(HtmlNode htmlBody)
         {
-            string cleanedText = text.Replace("\n", " ").Replace("\t", " ");
-            cleanedText = Regex.Replace(cleanedText, @"\s+", " ").Trim();
-            return cleanedText;
-        }
-
-        private static List<HtmlNode> RevertNodesToHtml(List<string> nonEmptyNodes)
-        {
-            List<HtmlNode> nonEmptyHtmlNodes = new List<HtmlNode>();
-            foreach (string nonEmptyNode in nonEmptyNodes)
+            HtmlNodeCollection imageNodes = htmlBody.SelectNodes("//img[@src]");
+            foreach (HtmlNode imageNode in imageNodes)
             {
-                HtmlDocument tempDoc = new HtmlDocument { };
-                tempDoc.LoadHtml($"<div>{nonEmptyNode}</div>");
-                HtmlNode nonEmptyHtmlNode = tempDoc.DocumentNode.FirstChild;
-                nonEmptyHtmlNodes.Add(nonEmptyHtmlNode);
-            }
-
-            return nonEmptyHtmlNodes;
-        }
-
-        private static List<NodeModel> ParseParagraphNodes(HtmlNodeCollection childNodes)
-        {
-            List<NodeModel> articleNodes = new List<NodeModel>();
-            foreach (HtmlNode childNode in childNodes)
-            {
-                if (childNode.Name == "img" || childNode.InnerHtml.Contains("<img"))
+                string imageSrc = imageNode.GetAttributeValue("src", null);
+                if (imageSrc.Contains("../"))
                 {
-                    articleNodes.Add(ParseImageNode(childNode));
-                }
-                if (childNode.Name == "a" || childNode.InnerHtml.Contains("<a"))
-                {
-                    articleNodes.Add(ParseLinkNode(childNode));
-                }
-                if (childNode.InnerHtml.Contains("<li>"))
-                {
-                    ParseLiElementNode(childNode);    
-                }
-                else
-                {
-                    articleNodes.Add(ParseTextNode(childNode));
+                    imageSrc = imageSrc.Replace("../", "/");
                 }
             }
-            return articleNodes;
-        }
-
-
-        private static ImageNodeModel ParseImageNode(HtmlNode cleanedNode)
-        {
-            HtmlNode imgNode = cleanedNode.SelectSingleNode("//img[@src]");
-            HtmlNode contentNode = cleanedNode.SelectSingleNode("//center") != null ? cleanedNode.SelectSingleNode("//center") : cleanedNode.SelectSingleNode("//p");
-
-            return new ImageNodeModel
-            {
-                Type = NodeType.Image,
-                ImageText = ParseParagraphNodes(contentNode.ChildNodes),
-                Link = imgNode.GetAttributeValue("src", null),
-                AltText = imgNode.GetAttributeValue("alt", null),
-            };
-        }
-
-        private static NodeModel ParseLinkNode(HtmlNode cleanedNode)
-        {
-            (bool bold, bool italic, bool underline) = CheckStyling(cleanedNode);
-            HtmlNode linkNode = cleanedNode.SelectSingleNode("//a");
-
-            return new NodeModel
-            {
-                Type = NodeType.Link,
-                Content = cleanedNode.InnerText.Trim(),
-                Link = linkNode.GetAttributeValue("href", null),
-                Italic = italic,
-                Bold = bold,
-                Underline = underline
-            };
-        }
-
-        private static (bool, bool, bool) CheckStyling(HtmlNode node)
-        {
-            (bool bold, bool italic, bool underline) = (false, false, false);
-
-            if (node.OuterHtml.Contains("<b>") || node.OuterHtml.Contains("<strong>")) bold = true;
-            if (node.OuterHtml.Contains("<i>") || node.OuterHtml.Contains("<em>")) italic = true;
-            if (node.OuterHtml.Contains("<u>")) underline = true;
-            return (bold, italic, underline);
-        }
-        private static void ParseLiElementNode(HtmlNode childNode)
-        {
-            HtmlNode liNode = childNode.SelectSingleNode("//li");
-            ParseParagraphNodes(liNode.ChildNodes);
-        }
-
-        private static NodeModel ParseTextNode(HtmlNode nonEmptyHtmlNode)
-        {
-            (bool bold, bool italic, bool underline) = CheckStyling(nonEmptyHtmlNode);
-
-            return new NodeModel
-            {
-                Type = NodeType.Text,
-                Content = nonEmptyHtmlNode.InnerText,
-                Italic = italic,
-                Bold = bold,
-                Underline = underline
-            };
         }
     }
 }

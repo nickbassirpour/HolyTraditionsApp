@@ -2,26 +2,32 @@
 using System.Text;
 using WebScraper.Helpers;
 using WebScraper.Models;
+using WebScraper.Validation;
 
 namespace WebScraper.Services
 {
     internal class WebScraperService
     {
         private HtmlDocument _htmlDoc;
+        private string _url;
         public WebScraperService(string url)
         {
             HtmlWeb web = new HtmlWeb { OverrideEncoding = Encoding.UTF8 };
+            _url = url;
             _htmlDoc = web.Load(url);
         }
 
         public ArticleModel ScrapeArticle()
         {
+            (string htmlBody, string htmlEndOfArticle) = SplitHtmlBody();
+
             ArticleModel articleModel = new ArticleModel();
-            articleModel.Author = GetAuthor();
-            articleModel.Title = GetTitle();
+            articleModel.Url = new System.Uri(_url);
             articleModel.Topic = GetTopic();
-            //articleModel.Source = GetSource();
             articleModel.Series = GetSeries();
+            articleModel.Title = GetTitle();
+            articleModel.Author = GetAuthor();
+            articleModel.Body = GetBody(htmlBody);
             articleModel.Date = GetDate();
             return articleModel;
         }
@@ -32,9 +38,13 @@ namespace WebScraper.Services
             return topic.InnerText.Trim();
         }
 
-        public string GetSeries()
+        public string? GetSeries()
         {
             HtmlNode? series = _htmlDoc.DocumentNode.SelectSingleNode("//*[@class='GreenSeries']");
+            if (series == null)
+            {
+                return null;
+            }
             return series.InnerText.Trim();
         }
 
@@ -49,30 +59,31 @@ namespace WebScraper.Services
             HtmlNode? author = _htmlDoc.DocumentNode.SelectSingleNode("//*[@class='author']");
             return author.InnerText.Trim();
         }
-        public void GetBody()
-        {
-            HtmlNode body = _htmlDoc.DocumentNode.SelectSingleNode("//*[@id='R']");
-            HtmlDocument splitBody = new HtmlDocument();
-            splitBody.LoadHtml(body.InnerHtml.Split("<!-- Add")[0]);
-            HtmlNode splitBodyHtmlNode = splitBody.DocumentNode;
 
-            HtmlParsingHelper.ParseBody(splitBodyHtmlNode);
+        public (string, string) SplitHtmlBody()
+        {
+            string htmlBodyNode = _htmlDoc.DocumentNode.InnerHtml;
+            string splitHtmlBody = htmlBodyNode.Split("alt=\"contact\">")[1];
+            List<string> cleanedHtmlBody = splitHtmlBody.Split("<!-- AddToAny BEGIN -->").ToList();
+
+            string htmlBody = cleanedHtmlBody[0];
+            string htmlEndOfArticle = cleanedHtmlBody[1];
+
+            return (htmlBody, htmlEndOfArticle);
+        }
+        public string GetBody(string htmlBody)
+        {
+            HtmlDocument document = new HtmlDocument();
+            document.LoadHtml(htmlBody);
+
+            HtmlParsingHelper.ParseBody(document.DocumentNode);
+            string hello = "hello";
+            return hello;
         }
 
         public void GetSource()
         {
 
-        }
-
-        public void GetContinued()
-        {
-
-        }
-
-        public List<NodeModel> GetFootnotes()
-        {
-            HtmlNode? footNotes = _htmlDoc.DocumentNode.SelectSingleNode("//*[@id='footnotes']");
-            return HtmlParsingHelper.ParseListItems(footNotes);
         }
 
         public string GetDate()
