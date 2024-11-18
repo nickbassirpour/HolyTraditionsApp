@@ -34,17 +34,18 @@ namespace WebScraper.Helpers
             return resultList;
         }
 
-        internal static void ParseBody(HtmlNode node)
+        internal static void ParseBody(HtmlNode node, string url)
         {
-            FixLinks(node);
-            FixImageUrls(node);
+            FixLinks(node, url);
+            FixImageUrls(node, url);
+            Console.WriteLine(node.InnerHtml);
         }
 
-        internal static void FixLinks(HtmlNode htmlBody)
+        internal static void FixLinks(HtmlNode htmlBody, string url)
         {
             HtmlNodeCollection linkNodes = htmlBody.SelectNodes("//a[@href]");
         }
-        internal static void FixImageUrls(HtmlNode htmlBody)
+        internal static void FixImageUrls(HtmlNode htmlBody, string url)
         {
             HtmlNodeCollection imageNodes = htmlBody.SelectNodes("//img[@src]");
             foreach (HtmlNode imageNode in imageNodes)
@@ -53,8 +54,37 @@ namespace WebScraper.Helpers
                 if (imageSrc.Contains("../"))
                 {
                     imageSrc = imageSrc.Replace("../", "/");
+                } 
+                else if (imageSrc.Contains("./"))
+                {
+                    imageSrc = imageSrc.Replace("./", "/");
+                }
+
+                if (imageSrc.Contains("shtml"))
+                {
+                    imageSrc = imageSrc.Replace("shtml", "html");
+                } 
+                else if (imageSrc.Contains("shtm"))
+                {
+                    imageSrc = imageSrc.Replace("shtm", "htm");
+                }
+
+                if (!imageSrc.Contains("/") && !imageSrc.Contains("http"))
+                {
+                    string category = GetCategoryFromURL(url);
+                    imageSrc = "https://traditioninaction.org" + "/" + category + "/" + imageSrc;
+                }
+                else if (!imageSrc.Contains("http"))
+                {
+                    imageSrc = "https://traditioninaction.org" + imageSrc;
                 }
             }
+        }
+
+        internal static string GetCategoryFromURL(string url)
+        {
+            string category = url.Split("/")[3];
+            return category;
         }
     }
 }

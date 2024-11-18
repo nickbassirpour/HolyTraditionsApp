@@ -76,7 +76,7 @@ namespace WebScraper.Services
             HtmlDocument document = new HtmlDocument();
             document.LoadHtml(htmlBody);
 
-            HtmlParsingHelper.ParseBody(document.DocumentNode);
+            HtmlParsingHelper.ParseBody(document.DocumentNode, _url);
             string hello = "hello";
             return hello;
         }
