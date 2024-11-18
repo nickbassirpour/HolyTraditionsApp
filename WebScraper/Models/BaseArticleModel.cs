@@ -9,7 +9,7 @@ namespace WebScraper.Models
     internal class BaseArticleModel
     {
         public string Title { get; set; }
-        public Uri Url { get; set; }
+        public string Url { get; set; }
 
     }
 }

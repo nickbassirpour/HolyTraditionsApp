@@ -7,10 +7,10 @@ using WebScraper.Models;
 using WebScraper.Enums;
 using WebScraper.Services;
 
-void Scrape(string url)
+async void Scrape(string url)
 {
     WebScraperService webScraper = new WebScraperService(url);
-    webScraper.ScrapeArticle(); 
+    await webScraper.ScrapeArticle(); 
 }
 
 Scrape("https://traditioninaction.org/bev/298bev11_08_2024.htm");

@@ -1,4 +1,5 @@
 ﻿using HtmlAgilityPack;
+using System;
 using System.Text;
 using WebScraper.Helpers;
 using WebScraper.Models;
@@ -12,17 +13,18 @@ namespace WebScraper.Services
         private string _url;
         public WebScraperService(string url)
         {
-            HtmlWeb web = new HtmlWeb { OverrideEncoding = Encoding.UTF8 };
             _url = url;
+
+            HtmlWeb web = new HtmlWeb { OverrideEncoding = Encoding.UTF8 };
             _htmlDoc = web.Load(url);
         }
 
-        public ArticleModel ScrapeArticle()
+        public async Task<Result<ArticleModel, ValidationFailed>> ScrapeArticle()
         {
             (string htmlBody, string htmlEndOfArticle) = SplitHtmlBody();
 
             ArticleModel articleModel = new ArticleModel();
-            articleModel.Url = new System.Uri(_url);
+            articleModel.Url = _url;
             articleModel.Topic = GetTopic();
             articleModel.Series = GetSeries();
             articleModel.Title = GetTitle();
@@ -32,9 +34,13 @@ namespace WebScraper.Services
             return articleModel;
         }
 
-        public string GetTopic()
+        public string? GetTopic()
         {
             HtmlNode? topic = _htmlDoc.DocumentNode.Descendants().FirstOrDefault(node => node.Id == "topicHeader" || node.Element("h3") != null);
+            if (topic == null)
+            {
+                return null;
+            }
             return topic.InnerText.Trim();
         }
 
@@ -48,15 +54,23 @@ namespace WebScraper.Services
             return series.InnerText.Trim();
         }
 
-        public string GetTitle()
+        public string? GetTitle()
         {
             HtmlNode? title = _htmlDoc.DocumentNode.Descendants().FirstOrDefault(node => node.Name == "h1" || node.Name == "h4");
+            if (title == null)
+            {
+                return null;
+            }
             return title.InnerText.Trim();
         }
 
-        public string GetAuthor()
+        public string? GetAuthor()
         {
             HtmlNode? author = _htmlDoc.DocumentNode.SelectSingleNode("//*[@class='author']");
+            if (author == null)
+            {
+                return null;
+            }
             return author.InnerText.Trim();
         }
 
@@ -71,6 +85,7 @@ namespace WebScraper.Services
 
             return (htmlBody, htmlEndOfArticle);
         }
+
         public string GetBody(string htmlBody)
         {
             HtmlDocument document = new HtmlDocument();
@@ -86,9 +101,13 @@ namespace WebScraper.Services
 
         }
 
-        public string GetDate()
+        public string? GetDate()
         {
             HtmlNode? date = _htmlDoc.DocumentNode.SelectSingleNode("//*[@id='posted' or @id='sitation']");
+            if (date == null)
+            {
+                return null;
+            }
             return date.InnerText.Trim();
         }
 
