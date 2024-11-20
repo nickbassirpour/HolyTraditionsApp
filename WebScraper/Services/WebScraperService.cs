@@ -1,6 +1,7 @@
 ﻿using HtmlAgilityPack;
 using System;
 using System.Text;
+using System.Text.RegularExpressions;
 using WebScraper.Helpers;
 using WebScraper.Models;
 using WebScraper.Validation;
@@ -21,7 +22,7 @@ namespace WebScraper.Services
 
         public async Task<Result<ArticleModel, ValidationFailed>> ScrapeArticle()
         {
-            (string htmlBody, string htmlEndOfArticle) = SplitHtmlBody();
+            string htmlBody = SplitHtmlBody();
 
             ArticleModel articleModel = new ArticleModel();
             articleModel.Url = _url;
@@ -74,16 +75,15 @@ namespace WebScraper.Services
             return author.InnerText.Trim();
         }
 
-        public (string, string) SplitHtmlBody()
+        public string SplitHtmlBody()
         {
             string htmlBodyNode = _htmlDoc.DocumentNode.InnerHtml;
             string splitHtmlBody = htmlBodyNode.Split("alt=\"contact\">")[1];
-            List<string> cleanedHtmlBody = splitHtmlBody.Split("<!-- AddToAny BEGIN -->").ToList();
+            string cleanedHtmlBody = String.Join("", Regex.Split(splitHtmlBody, @"<!-- AddToAny BEGIN -->.*?<!-- AddToAny END -->", RegexOptions.Singleline));
 
-            string htmlBody = cleanedHtmlBody[0];
-            string htmlEndOfArticle = cleanedHtmlBody[1];
+            Console.WriteLine(cleanedHtmlBody);
 
-            return (htmlBody, htmlEndOfArticle);
+            return cleanedHtmlBody;
         }
 
         public string GetBody(string htmlBody)
@@ -96,14 +96,9 @@ namespace WebScraper.Services
             return hello;
         }
 
-        public void GetSource()
-        {
-
-        }
-
         public string? GetDate()
         {
-            HtmlNode? date = _htmlDoc.DocumentNode.SelectSingleNode("//*[@id='posted' or @id='sitation']");
+            HtmlNode? date = _htmlDoc.DocumentNode.SelectSingleNode("//*[@id='posted' or @id='sitation' or contains(.//text(), 'posted on')]");
             if (date == null)
             {
                 return null;
@@ -111,10 +106,5 @@ namespace WebScraper.Services
             return date.InnerText.Trim();
         }
 
-        //public List<NodeModel> GetRelatedArticles()
-        //{
-        //    var relatedArticles = _htmlDoc.DocumentNode.SelectSingleNode("//ul[@class='relatedlist']");
-        //    return HtmlParsingHelper.ParseLinks(relatedArticles);
-        //}
     }
 }
