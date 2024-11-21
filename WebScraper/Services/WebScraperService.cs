@@ -1,6 +1,7 @@
 ﻿using HtmlAgilityPack;
 using System;
 using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using WebScraper.Helpers;
 using WebScraper.Models;
@@ -20,9 +21,10 @@ namespace WebScraper.Services
             _htmlDoc = web.Load(url);
         }
 
-        public async Task<Result<ArticleModel, ValidationFailed>> ScrapeArticle()
+        public ArticleModel ScrapeArticle()
         {
             string htmlBody = SplitHtmlBody();
+            List<BaseArticleModel> relatedArticles = GetRelatedArticles(htmlBody);
 
             ArticleModel articleModel = new ArticleModel();
             articleModel.Url = _url;
@@ -33,6 +35,40 @@ namespace WebScraper.Services
             articleModel.Body = GetBody(htmlBody);
             articleModel.Date = GetDate();
             return articleModel;
+        }
+
+        private List<BaseArticleModel>? GetRelatedArticles(string htmlBody)
+        {
+            string bottomOfArticle = _htmlDoc.DocumentNode.InnerHtml.Split("Related Topics of Interest</div>")[1];
+            List<BaseArticleModel> relatedArticles = new List<BaseArticleModel>();
+
+            if (bottomOfArticle == null)
+            {
+                return null;
+            }
+            
+            HtmlDocument htmlDocument = new HtmlDocument();
+            htmlDocument.LoadHtml(bottomOfArticle);
+            IEnumerable<HtmlNode> linkElements = htmlDocument.DocumentNode.SelectNodes("//a");
+
+            if (linkElements.Count() == 0)
+            {
+                return null;
+            }
+   
+            foreach (HtmlNode node in linkElements)
+            {
+                if (String.IsNullOrWhiteSpace(node.InnerText)) continue;
+                if (node.InnerText.MatchesAnyOf(linksNotToScrape.ToArray())) continue;
+                relatedArticles.Add(new BaseArticleModel()
+                {
+                    Url = node.GetAttributeValue("href", ""),
+                    Title = node.InnerText,
+                });
+            }
+            
+
+            return relatedArticles;
         }
 
         public string? GetTopic()
@@ -79,10 +115,7 @@ namespace WebScraper.Services
         {
             string htmlBodyNode = _htmlDoc.DocumentNode.InnerHtml;
             string splitHtmlBody = htmlBodyNode.Split("alt=\"contact\">")[1];
-            string cleanedHtmlBody = String.Join("", Regex.Split(splitHtmlBody, @"<!-- AddToAny BEGIN -->.*?<!-- AddToAny END -->", RegexOptions.Singleline));
-
-            Console.WriteLine(cleanedHtmlBody);
-
+            string cleanedHtmlBody = splitHtmlBody.Split("<!-- AddToAny BEGIN -->")[0];
             return cleanedHtmlBody;
         }
 
@@ -106,5 +139,17 @@ namespace WebScraper.Services
             return date.InnerText.Trim();
         }
 
+        List<string> linksNotToScrape = new List<string>
+        {
+            "home",
+            "books",
+            "cds",
+            "search",
+            "contact us",
+            "donate",
+            "forgotten truths",
+            "religious",
+            "news",
+        };
     }
 }

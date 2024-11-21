@@ -10,7 +10,7 @@ using WebScraper.Services;
 async void Scrape(string url)
 {
     WebScraperService webScraper = new WebScraperService(url);
-    await webScraper.ScrapeArticle(); 
+    webScraper.ScrapeArticle(); 
 }
 
 Scrape("https://traditioninaction.org/bev/298bev11_08_2024.htm");

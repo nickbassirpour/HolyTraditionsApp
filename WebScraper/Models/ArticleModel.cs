@@ -12,8 +12,6 @@ namespace WebScraper.Models
         public string? Series {  get; set; }
         public string? Author { get; set; }
         public string Body { get; set; }
-        public string? Source { get; set; }
         public string? Date { get; set; }
-        public string? RelatedArticles { get; set; }
     }
 }
