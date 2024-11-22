@@ -7,11 +7,17 @@ using WebScraper.Models;
 using WebScraper.Enums;
 using WebScraper.Services;
 
+void ScrapeList(string url)
+{
+    ArticleListScraperService articleListScraper = new ArticleListScraperService(url);
+    articleListScraper.ScrapeArticles();
+}
 async void Scrape(string url)
 {
-    WebScraperService webScraper = new WebScraperService(url);
+    ArticleScraperService webScraper = new ArticleScraperService(url);
     webScraper.ScrapeArticle(); 
 }
 
-Scrape("https://traditioninaction.org/bev/298bev11_08_2024.htm");
+ScrapeList("https://traditioninaction.org/religious/n000rpForgottenTruths.htm#forgotten");
+//Scrape("https://traditioninaction.org/bev/298bev11_08_2024.htm");
 

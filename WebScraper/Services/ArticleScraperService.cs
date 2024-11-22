@@ -9,11 +9,11 @@ using WebScraper.Validation;
 
 namespace WebScraper.Services
 {
-    internal class WebScraperService
+    internal class ArticleScraperService
     {
         private HtmlDocument _htmlDoc;
         private string _url;
-        public WebScraperService(string url)
+        public ArticleScraperService(string url)
         {
             _url = url;
 
@@ -28,7 +28,7 @@ namespace WebScraper.Services
 
             ArticleModel articleModel = new ArticleModel();
             articleModel.Url = _url;
-            articleModel.Topic = GetTopic();
+            articleModel.Category = GetCategory();
             articleModel.Series = GetSeries();
             articleModel.Title = GetTitle();
             articleModel.Author = GetAuthor();
@@ -56,22 +56,21 @@ namespace WebScraper.Services
                 return null;
             }
    
-            foreach (HtmlNode node in linkElements)
+            foreach (HtmlNode linkElement in linkElements)
             {
-                if (String.IsNullOrWhiteSpace(node.InnerText)) continue;
-                if (node.InnerText.MatchesAnyOf(linksNotToScrape.ToArray())) continue;
+                if (String.IsNullOrWhiteSpace(linkElement.InnerText)) continue;
+                if (linkElement.InnerText.MatchesAnyOf(ScrapingHelper.linksNotToScrape)) continue;
                 relatedArticles.Add(new BaseArticleModel()
                 {
-                    Url = node.GetAttributeValue("href", ""),
-                    Title = node.InnerText,
+                    Url = linkElement.GetAttributeValue("href", ""),
+                    Title = linkElement.InnerText,
                 });
             }
             
-
             return relatedArticles;
         }
 
-        public string? GetTopic()
+        public string? GetCategory()
         {
             HtmlNode? topic = _htmlDoc.DocumentNode.Descendants().FirstOrDefault(node => node.Id == "topicHeader" || node.Element("h3") != null);
             if (topic == null)
@@ -139,17 +138,5 @@ namespace WebScraper.Services
             return date.InnerText.Trim();
         }
 
-        List<string> linksNotToScrape = new List<string>
-        {
-            "home",
-            "books",
-            "cds",
-            "search",
-            "contact us",
-            "donate",
-            "forgotten truths",
-            "religious",
-            "news",
-        };
     }
 }
