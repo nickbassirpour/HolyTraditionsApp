@@ -27,7 +27,7 @@ namespace WebScraper.Services
 
             ArticleModel articleModel = new ArticleModel();
             articleModel.Url = _url;
-            articleModel.Category = GetCategory();
+            articleModel.SubCategory = GetSubCategory();
             articleModel.Series = GetSeries();
             articleModel.Title = GetTitle();
             articleModel.Author = GetAuthor();
@@ -37,7 +37,8 @@ namespace WebScraper.Services
             articleModel.RelatedArticles = GetRelatedArticles(splitHtmlBody);
             return articleModel;
         }
-        public string? GetCategory()
+
+        public string? GetSubCategory()
         {
             HtmlNode? topic = _htmlDoc.DocumentNode.Descendants().FirstOrDefault(node => node.Id == "topicHeader" || node.Element("h3") != null);
             if (topic == null)
@@ -68,6 +69,7 @@ namespace WebScraper.Services
             {
                 if (String.IsNullOrWhiteSpace(linkElement.InnerText)) continue;
                 if (linkElement.InnerText.MatchesAnyOf(ScrapingHelper.linksNotToScrape)) continue;
+
                 relatedArticles.Add(new BaseArticleModel()
                 {
                     Url = linkElement.GetAttributeValue("href", ""),
@@ -114,6 +116,7 @@ namespace WebScraper.Services
             HtmlNode parsedBody = HtmlParsingHelper.ParseBody(htmlDocBody.DocumentNode, _url);
             return parsedBody.InnerHtml;
         }
+
         private string GetBodyInnerText(string htmlBody)
         {
             HtmlDocument htmlDocBody = HtmlParsingHelper.LoadHtmlDocument(htmlBody);
