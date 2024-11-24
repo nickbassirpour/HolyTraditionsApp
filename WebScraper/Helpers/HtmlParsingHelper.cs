@@ -17,28 +17,32 @@ namespace WebScraper.Helpers
 {
     internal static class HtmlParsingHelper
     {
-        internal static List<NodeModel> ParseListItems(HtmlNode footNotesNode)
+        internal static IEnumerable<HtmlNode> GetLinkElements(string bottomOfArticle)
         {
-            var resultList = new List<NodeModel>();
-            if (footNotesNode == null) return resultList;
-
-            var liNodes = footNotesNode.Descendants("li");
-            foreach (var liNode in liNodes)
-            {
-                List<NodeModel> nodeList = new List<NodeModel>();
-                string liNodeText = liNode.InnerHtml;
-                liNodeText.Replace("</li>", "").Replace("<li>", "");
-
-                //ParseNode(liNodeText, resultList);
-            }
-            return resultList;
+            HtmlDocument htmlDocument = new HtmlDocument();
+            htmlDocument.LoadHtml(bottomOfArticle);
+            IEnumerable<HtmlNode> linkElements = htmlDocument.DocumentNode.SelectNodes("//a");
+            return linkElements;
         }
-
-        internal static void ParseBody(HtmlNode node, string url)
+        internal static string SplitHtmlBody(HtmlDocument htmlDoc)
+        {
+            string htmlBodyNode = htmlDoc.DocumentNode.InnerHtml;
+            string splitHtmlBody = htmlBodyNode.Split("alt=\"contact\">")[1];
+            string cleanedHtmlBody = splitHtmlBody.Split("<!-- AddToAny BEGIN -->")[0];
+            return cleanedHtmlBody;
+        }
+        internal static HtmlNode ParseBody(HtmlNode node, string url)
         {
             FixLinks(node, url);
             FixImageUrls(node, url);
-            Console.WriteLine(node.InnerHtml);
+            return node;
+        }
+
+        internal static HtmlDocument LoadHtmlDocument(string html)
+        {
+            HtmlDocument document = new HtmlDocument();
+            document.LoadHtml(html);
+            return document;
         }
 
         internal static void FixLinks(HtmlNode htmlBody, string url)

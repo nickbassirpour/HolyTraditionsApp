@@ -23,8 +23,7 @@ namespace WebScraper.Services
 
         public ArticleModel ScrapeArticle()
         {
-            string htmlBody = SplitHtmlBody();
-            List<BaseArticleModel> relatedArticles = GetRelatedArticles(htmlBody);
+            string splitHtmlBody = HtmlParsingHelper.SplitHtmlBody(_htmlDoc);
 
             ArticleModel articleModel = new ArticleModel();
             articleModel.Url = _url;
@@ -32,9 +31,20 @@ namespace WebScraper.Services
             articleModel.Series = GetSeries();
             articleModel.Title = GetTitle();
             articleModel.Author = GetAuthor();
-            articleModel.Body = GetBody(htmlBody);
+            articleModel.BodyHtml = GetBody(splitHtmlBody);
+            articleModel.BodyInnerText = GetBodyInnerText(splitHtmlBody);
             articleModel.Date = GetDate();
+            articleModel.RelatedArticles = GetRelatedArticles(splitHtmlBody);
             return articleModel;
+        }
+        public string? GetCategory()
+        {
+            HtmlNode? topic = _htmlDoc.DocumentNode.Descendants().FirstOrDefault(node => node.Id == "topicHeader" || node.Element("h3") != null);
+            if (topic == null)
+            {
+                return null;
+            }
+            return topic.InnerText.Trim();
         }
 
         private List<BaseArticleModel>? GetRelatedArticles(string htmlBody)
@@ -46,10 +56,8 @@ namespace WebScraper.Services
             {
                 return null;
             }
-            
-            HtmlDocument htmlDocument = new HtmlDocument();
-            htmlDocument.LoadHtml(bottomOfArticle);
-            IEnumerable<HtmlNode> linkElements = htmlDocument.DocumentNode.SelectNodes("//a");
+
+            IEnumerable<HtmlNode> linkElements = HtmlParsingHelper.GetLinkElements(bottomOfArticle);
 
             if (linkElements.Count() == 0)
             {
@@ -68,16 +76,6 @@ namespace WebScraper.Services
             }
             
             return relatedArticles;
-        }
-
-        public string? GetCategory()
-        {
-            HtmlNode? topic = _htmlDoc.DocumentNode.Descendants().FirstOrDefault(node => node.Id == "topicHeader" || node.Element("h3") != null);
-            if (topic == null)
-            {
-                return null;
-            }
-            return topic.InnerText.Trim();
         }
 
         public string? GetSeries()
@@ -110,22 +108,16 @@ namespace WebScraper.Services
             return author.InnerText.Trim();
         }
 
-        public string SplitHtmlBody()
-        {
-            string htmlBodyNode = _htmlDoc.DocumentNode.InnerHtml;
-            string splitHtmlBody = htmlBodyNode.Split("alt=\"contact\">")[1];
-            string cleanedHtmlBody = splitHtmlBody.Split("<!-- AddToAny BEGIN -->")[0];
-            return cleanedHtmlBody;
-        }
-
         public string GetBody(string htmlBody)
         {
-            HtmlDocument document = new HtmlDocument();
-            document.LoadHtml(htmlBody);
-
-            HtmlParsingHelper.ParseBody(document.DocumentNode, _url);
-            string hello = "hello";
-            return hello;
+            HtmlDocument htmlDocBody = HtmlParsingHelper.LoadHtmlDocument(htmlBody);
+            HtmlNode parsedBody = HtmlParsingHelper.ParseBody(htmlDocBody.DocumentNode, _url);
+            return parsedBody.InnerHtml;
+        }
+        private string GetBodyInnerText(string htmlBody)
+        {
+            HtmlDocument htmlDocBody = HtmlParsingHelper.LoadHtmlDocument(htmlBody);
+            return htmlDocBody.DocumentNode.InnerText;
         }
 
         public string? GetDate()

@@ -10,11 +10,11 @@ using WebScraper.Validation;
 
 namespace WebScraper.Services
 {
-    internal class ArticleListScraperService
+    internal class ListScraperService
     {
         private HtmlDocument _htmlDoc;
         private readonly string _category;
-        internal ArticleListScraperService(string url)
+        internal ListScraperService(string url)
         {
             HtmlWeb web = new HtmlWeb { OverrideEncoding = Encoding.UTF8 };
             _htmlDoc = web.Load(url);
@@ -24,7 +24,7 @@ namespace WebScraper.Services
         internal Result<List<BaseArticleModel>?, ValidationFailed> ScrapeArticles()
         {
             IEnumerable<HtmlNode> linkElements = GetLinkElements();
-            if (linkElements.Count() == 0) return new ValidationFailed("Unable to scrape link elements");
+            if (linkElements.Count() == 0) return new ValidationFailed("No link elements found.");
 
             List<BaseArticleModel> articleLinks = new List<BaseArticleModel>();
             foreach (HtmlNode linkElement in linkElements)
