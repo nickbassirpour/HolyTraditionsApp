@@ -9,7 +9,7 @@ using WebScraper.Services;
 
 void ScrapeList(string url)
 {
-    ArticleListScraperService articleListScraper = new ArticleListScraperService(url);
+    ListScraperService articleListScraper = new ListScraperService(url);
     articleListScraper.ScrapeArticles();
 }
 async void Scrape(string url)

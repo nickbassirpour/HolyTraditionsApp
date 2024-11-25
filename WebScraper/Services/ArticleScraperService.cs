@@ -27,6 +27,7 @@ namespace WebScraper.Services
 
             ArticleModel articleModel = new ArticleModel();
             articleModel.Url = _url;
+            articleModel.Category = HtmlParsingHelper.GetCategoryFromURL(_url);
             articleModel.SubCategory = GetSubCategory();
             articleModel.Series = GetSeries();
             articleModel.Title = GetTitle();
