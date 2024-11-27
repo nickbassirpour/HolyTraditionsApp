@@ -4,8 +4,8 @@ using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using WebScraper.Helpers;
-using WebScraper.Models;
 using WebScraper.Validation;
+using DataAccessLibrary.Models;
 
 namespace WebScraper.Services
 {

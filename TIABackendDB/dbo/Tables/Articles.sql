@@ -5,6 +5,7 @@
 	[Url] VARCHAR(300) NOT NULL,
 	[Description] VARCHAR(300),
 	[SubCategoryId] INT NOT NULL,
+	CONSTRAINT FK_Article_SubCategory FOREIGN KEY (SubCategoryId) REFERENCES SubCategory(Id),
 	[Series] VARCHAR(300),
 	[Author] VARCHAR(200),
 	[BodyHtml] VARCHAR(MAX) NOT NULL,

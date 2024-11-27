@@ -1,0 +1,6 @@
+@TIAArticleAppAPI_HostAddress = http://localhost:5223
+
+GET {{TIAArticleAppAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

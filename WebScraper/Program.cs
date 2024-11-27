@@ -3,7 +3,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
-using WebScraper.Models;
+using DataAccessLibrary.Models;
 using WebScraper.Enums;
 using WebScraper.Services;
 
