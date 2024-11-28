@@ -2,7 +2,7 @@
 using System.Data;
 using System.Data.SqlClient;
 
-namespace TIAArticleAppAPI.Services
+namespace TIAArticleAppAPI.Data
 {
     public class SqlDataAccess : ISqlDataAccess
     {
@@ -14,12 +14,20 @@ namespace TIAArticleAppAPI.Services
             _connectionString = _config.GetConnectionString("ConnectionString");
         }
 
-        public List<T> LoadData<T, U>(string sqlStatement, U parameters)
+        public List<T> LoadDataList<T, U>(string sqlStatement, U parameters)
         {
             using (IDbConnection connection = new SqlConnection(_connectionString))
             {
                 List<T> rows = connection.Query<T>(sqlStatement, parameters, commandType: CommandType.StoredProcedure).ToList();
                 return rows;
+            }
+        }
+        public T LoadDataObject<T, U>(string sqlStatement, U parameters)
+        {
+            using (IDbConnection connection = new SqlConnection(_connectionString))
+            {
+                T row = connection.QueryFirst<T>(sqlStatement, parameters, commandType: CommandType.StoredProcedure);
+                return row;
             }
         }
 

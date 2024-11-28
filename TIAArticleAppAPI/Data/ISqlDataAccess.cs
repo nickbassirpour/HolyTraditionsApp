@@ -1,9 +1,9 @@
-﻿
-namespace TIAArticleAppAPI.Services
+﻿namespace TIAArticleAppAPI.Data
 {
     public interface ISqlDataAccess
     {
-        List<T> LoadData<T, U>(string sqlStatement, U parameters);
+        List<T> LoadDataList<T, U>(string sqlStatement, U parameters);
+        T LoadDataObject<T, U>(string sqlStatement, U parameters);
         void SaveData<T>(string sqlStatement, T parameters);
     }
 }
