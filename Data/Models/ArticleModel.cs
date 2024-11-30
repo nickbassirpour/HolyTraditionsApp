@@ -10,7 +10,8 @@ namespace DataAccessLibrary.Models
     {
         public string SubCategory { get; set; }
         public string? Series {  get; set; }
-        public string? Author { get; set; }
+        public string? SeriesNumber { get; set; }
+        public List<string?> Author { get; set; }
         public string BodyHtml { get; set; }
         public string BodyInnerText { get; set; }
         public string? Date { get; set; }

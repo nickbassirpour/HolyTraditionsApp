@@ -29,7 +29,8 @@ namespace WebScraper.Services
             articleModel.Url = _url;
             articleModel.Category = HtmlParsingHelper.GetCategoryFromURL(_url);
             articleModel.SubCategory = GetSubCategory();
-            articleModel.Series = GetSeries();
+            articleModel.Series = GetSeriesNameAndNumber()[0];
+            articleModel.SeriesNumber = GetSeriesNameAndNumber()[1];
             articleModel.Title = GetTitle();
             articleModel.Author = GetAuthor();
             articleModel.BodyHtml = GetBody(splitHtmlBody);
@@ -81,14 +82,15 @@ namespace WebScraper.Services
             return relatedArticles;
         }
 
-        public string? GetSeries()
+        public string?[] GetSeriesNameAndNumber()
         {
             HtmlNode? series = _htmlDoc.DocumentNode.SelectSingleNode("//*[@class='GreenSeries']");
-            if (series == null)
+            if (series == null || string.IsNullOrWhiteSpace(series.InnerText))
             {
                 return null;
             }
-            return series.InnerText.Trim();
+            string[] seriesParts = series.InnerText.Trim().Split(" - ");
+            return seriesParts;
         }
 
         public string? GetTitle()
@@ -101,14 +103,20 @@ namespace WebScraper.Services
             return title.InnerText.Trim();
         }
 
-        public string? GetAuthor()
+        public List<string?> GetAuthor()
         {
             HtmlNode? author = _htmlDoc.DocumentNode.SelectSingleNode("//*[@class='author']");
             if (author == null)
             {
                 return null;
             }
-            return author.InnerText.Trim();
+
+            List<string> authors = author.InnerText.Trim()
+                .Split(new[] { "and", ",", "&" }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(author => author.Trim())
+                .ToList();
+
+            return authors;
         }
 
         public string GetBody(string htmlBody)
