@@ -134,12 +134,12 @@ namespace WebScraper.Services
 
         public string? GetDate()
         {
-            HtmlNode? date = _htmlDoc.DocumentNode.SelectSingleNode("//*[@id='posted' or @id='sitation' or contains(.//text(), 'posted on')]");
-            if (date == null)
+            HtmlNode? date = _htmlDoc.DocumentNode.SelectSingleNode("//*[@id='posted' or @id='sitation'");
+            if (date != null || !string.IsNullOrWhiteSpace(date.InnerText))
             {
-                return null;
+                return date.InnerText.Trim();
             }
-            return date.InnerText.Trim();
+            return null;
         }
 
     }
