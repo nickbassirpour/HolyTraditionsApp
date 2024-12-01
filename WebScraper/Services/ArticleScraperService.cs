@@ -35,6 +35,7 @@ namespace WebScraper.Services
             articleModel.Author = GetAuthor();
             articleModel.BodyHtml = GetBody(splitHtmlBody);
             articleModel.BodyInnerText = GetBodyInnerText(splitHtmlBody);
+            articleModel.ThumbnailURL = GetThumbnailUrl(splitHtmlBody);
             articleModel.Date = GetDate();
             articleModel.RelatedArticles = GetRelatedArticles(splitHtmlBody);
             return articleModel;
@@ -142,5 +143,12 @@ namespace WebScraper.Services
             return null;
         }
 
+        public string GetThumbnailUrl(string splitHtmlBody)
+        {
+            HtmlDocument splitBodyNode = HtmlParsingHelper.LoadHtmlDocument(splitHtmlBody);
+            HtmlNode? firstImageUrl = splitBodyNode.DocumentNode.SelectSingleNode("//img[1]");
+            string src = firstImageUrl.GetAttributeValue("src", string.Empty);
+            return src;
+        }
     }
 }
