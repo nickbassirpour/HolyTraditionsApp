@@ -6,11 +6,21 @@ using System.Text.RegularExpressions;
 using DataAccessLibrary.Models;
 using WebScraper.Enums;
 using WebScraper.Services;
+using WebScraper.Validation;
 
 void ScrapeList(string url)
 {
     ListScraperService articleListScraper = new ListScraperService(url);
-    articleListScraper.ScrapeArticles();
+    List<BaseArticleModel> articles = articleListScraper.ScrapeArticles();
+    if (articles != null)
+    {
+        foreach (BaseArticleModel article in articles)
+        {
+            string fullUrl = "https://traditioninaction.org/" + article.Url;
+            Scrape(fullUrl);
+        }
+    }
+
 }
 async void Scrape(string url)
 {

@@ -55,34 +55,54 @@ namespace WebScraper.Helpers
             foreach (HtmlNode imageNode in imageNodes)
             {
                 string imageSrc = imageNode.GetAttributeValue("src", null);
-                if (imageSrc.Contains("../"))
-                {
-                    imageSrc = imageSrc.Replace("../", "/");
-                } 
-                else if (imageSrc.Contains("./"))
-                {
-                    imageSrc = imageSrc.Replace("./", "/");
-                }
 
-                if (imageSrc.Contains("shtml"))
-                {
-                    imageSrc = imageSrc.Replace("shtml", "html");
-                } 
-                else if (imageSrc.Contains("shtm"))
-                {
-                    imageSrc = imageSrc.Replace("shtm", "htm");
-                }
+                //if (imageSrc.Contains("shtml"))
+                //{
+                //    imageSrc = imageSrc.Replace("shtml", "html");
+                //} 
+                //else if (imageSrc.Contains("shtm"))
+                //{
+                //    imageSrc = imageSrc.Replace("shtm", "htm");
+                //}
 
-                if (!imageSrc.Contains("/") && !imageSrc.Contains("http"))
-                {
-                    string category = GetCategoryFromURL(url);
-                    imageSrc = "https://traditioninaction.org" + "/" + category + "/" + imageSrc;
-                }
-                else if (!imageSrc.Contains("http"))
-                {
-                    imageSrc = "https://traditioninaction.org" + imageSrc;
-                }
+                CleanLink(imageSrc, url, true);
             }
+        }
+
+        internal static string CleanLink(string link, string mainUrl, bool useTIADomain)
+        {
+            string linkWithCleanedSlashes = CleanSlashesFromLink(link);
+            string linkWithCleanedSlashesAndDomain = AddDomainToLink(linkWithCleanedSlashes, mainUrl, useTIADomain);
+            return linkWithCleanedSlashesAndDomain;
+        }
+
+        private static string CleanSlashesFromLink(string link)
+        {
+            if (link.Contains("../"))
+            {
+                link = link.Replace("../", "/");
+            }
+            else if (link.Contains("./"))
+            {
+                link = link.Replace("./", "/");
+            }
+            return link;
+        }
+
+        private static string AddDomainToLink(string link, string mainUrl, bool useTIADomain)
+        {
+            string domain = useTIADomain ? "https://traditioninaction.org" : "";
+
+            if (!link.Contains("/") && !link.Contains("http"))
+            {
+                string category = GetCategoryFromURL(mainUrl);
+                link = domain + "/" + category + "/" + link;
+            }
+            else if (!link.Contains("http"))
+            {
+                link = domain + link;
+            }
+            return link;    
         }
 
         internal static string GetCategoryFromURL(string url)

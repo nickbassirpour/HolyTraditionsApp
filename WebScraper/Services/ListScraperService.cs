@@ -5,35 +5,34 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WebScraper.Helpers;
-using WebScraper.Models;
+using DataAccessLibrary.Models;
 using WebScraper.Validation;
 
 namespace WebScraper.Services
 {
     internal class ListScraperService
     {
+        private readonly string _url;
         private HtmlDocument _htmlDoc;
         private readonly string _category;
         internal ListScraperService(string url)
         {
             HtmlWeb web = new HtmlWeb { OverrideEncoding = Encoding.UTF8 };
+            _url = url;
             _htmlDoc = web.Load(url);
             _category = _htmlDoc.DocumentNode.SelectSingleNode("//font[@size='6']").InnerText;
         }
 
-        internal Result<List<BaseArticleModel>?, ValidationFailed> ScrapeArticles()
+        internal List<BaseArticleModel>? ScrapeArticles()
         {
             IEnumerable<HtmlNode> linkElements = GetLinkElements();
-            if (linkElements.Count() == 0) return new ValidationFailed("No link elements found.");
+            if (linkElements.Count() == 0) return null;
 
             List<BaseArticleModel> articleLinks = new List<BaseArticleModel>();
             foreach (HtmlNode linkElement in linkElements)
             {
                 if (linkElement.IsNullOrBadLink()) continue;
                 BaseArticleModel articleModel = GetBaseArticle(linkElement);
-                Console.WriteLine(articleModel.Title + "\n" + articleModel.Description);
-                Console.WriteLine();
-
                 articleLinks.Add(GetBaseArticle(linkElement));
             }
 
@@ -69,10 +68,10 @@ namespace WebScraper.Services
             else
             {
                 HtmlNode anchorNode = linkElement.SelectSingleNode(".//a");
-                HtmlNode descriptionNode = linkElement.SelectSingleNode(".//span | .//font | .//br/following-sibling::text()");
+                HtmlNode descriptionNode = linkElement.SelectSingleNode(".//span");
                 return new BaseArticleModel
                 {
-                    Url = linkElement.GetAttributeValue("href", ""),
+                    Url = HtmlParsingHelper.CleanLink(anchorNode.GetAttributeValue("href", ""), _url, true),
                     Title = anchorNode.InnerText.Trim(),
                     Description = descriptionNode?.InnerText.Trim(),
                 };
