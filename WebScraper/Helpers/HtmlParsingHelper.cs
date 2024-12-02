@@ -28,7 +28,7 @@ namespace WebScraper.Helpers
         {
             string htmlBodyNode = htmlDoc.DocumentNode.InnerHtml;
             string splitHtmlBody = htmlBodyNode.Split("alt=\"contact\">")[1];
-            string cleanedHtmlBody = splitHtmlBody.Split("<!-- AddToAny BEGIN -->")[0];
+            string cleanedHtmlBody = Regex.Split(splitHtmlBody, @"<!-- AddToAny BEGIN -->.*?<!-- AddToAny END -->", RegexOptions.Singleline)[0];
             return cleanedHtmlBody;
         }
         internal static HtmlNode ParseBody(HtmlNode node, string url)
@@ -89,6 +89,19 @@ namespace WebScraper.Helpers
         {
             string category = url.Split("/")[3];
             return category;
+        }
+
+        internal static string? ConvertStringToDate(string date)
+        {
+            if (DateTime.TryParse(date, out DateTime parsedDate))
+            {
+                string formattedDate = parsedDate.ToString("yyyy-MM-DD");
+                return formattedDate;
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }

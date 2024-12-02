@@ -44,6 +44,19 @@ namespace WebScraper.Helpers
             "our lady of good success",
             "the saint of the day",
         };
+
+        internal static string[] categoriesWithNoSubcatregory = new string[]
+        {
+            "bev",
+            "revolutionphotos",
+            "progressivistdoc",
+            "polemics",
+            "bkreviews",
+            "movies",
+            "bestof",
+            "olgs",
+            "sod",
+        };
     }
 }
  

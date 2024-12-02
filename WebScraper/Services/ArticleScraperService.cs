@@ -24,11 +24,12 @@ namespace WebScraper.Services
         public ArticleModel ScrapeArticle()
         {
             string splitHtmlBody = HtmlParsingHelper.SplitHtmlBody(_htmlDoc);
+            string category = HtmlParsingHelper.GetCategoryFromURL(_url);
 
             ArticleModel articleModel = new ArticleModel();
             articleModel.Url = _url;
-            articleModel.Category = HtmlParsingHelper.GetCategoryFromURL(_url);
-            articleModel.SubCategory = GetSubCategory();
+            articleModel.Category = category;
+            articleModel.SubCategory = GetSubCategory(category);
             articleModel.Series = GetSeriesNameAndNumber()[0];
             articleModel.SeriesNumber = GetSeriesNameAndNumber()[1];
             articleModel.Title = GetTitle();
@@ -36,13 +37,18 @@ namespace WebScraper.Services
             articleModel.BodyHtml = GetBody(splitHtmlBody);
             articleModel.BodyInnerText = GetBodyInnerText(splitHtmlBody);
             articleModel.ThumbnailURL = GetThumbnailUrl(splitHtmlBody);
-            articleModel.Date = GetDate();
+            articleModel.Date = GetDate(category);
             articleModel.RelatedArticles = GetRelatedArticles(splitHtmlBody);
             return articleModel;
         }
 
-        public string? GetSubCategory()
+        public string? GetSubCategory(string category)
         {
+            if (category.MatchesAnyOf(ScrapingHelper.categoriesWithNoSubcatregory))
+            {
+                return category;
+            }
+
             HtmlNode? topic = _htmlDoc.DocumentNode.Descendants().FirstOrDefault(node => node.Id == "topicHeader" || node.Element("h3") != null);
             if (topic == null)
             {
@@ -133,13 +139,34 @@ namespace WebScraper.Services
             return htmlDocBody.DocumentNode.InnerText;
         }
 
-        public string? GetDate()
+        public string? GetDate(string category)
         {
-            HtmlNode? date = _htmlDoc.DocumentNode.SelectSingleNode("//*[@id='posted' or @id='sitation'");
-            if (date != null || !string.IsNullOrWhiteSpace(date.InnerText))
+            if (category == "bev")
             {
-                return date.InnerText.Trim();
+                HtmlNode? dateFromBEV = _htmlDoc.DocumentNode.Descendants().FirstOrDefault(node => node.Id == "topicHeader" || node.Element("h3") != null);
+                if (dateFromBEV != null || !string.IsNullOrWhiteSpace(dateFromBEV.InnerText))
+                {
+                    string cleanedDateFromBEV = dateFromBEV.InnerText.Replace("NEWS:", "").Replace("News:", "").Replace("news:", "").Trim();
+                    return HtmlParsingHelper.ConvertStringToDate(cleanedDateFromBEV);
+                }
+                return null;
             }
+
+            HtmlNode? dateFromId = _htmlDoc.DocumentNode.SelectSingleNode("//*[@id='posted' or @id='sitation'");
+            if (dateFromId != null || !string.IsNullOrWhiteSpace(dateFromId.InnerText))
+            {
+                string cleanedDateFromId = dateFromId.InnerText.Trim();
+                return HtmlParsingHelper.ConvertStringToDate(cleanedDateFromId);
+            }
+
+            HtmlNode? dateFromSizeAndColor = _htmlDoc.DocumentNode.SelectSingleNode("//*[@size='1' and @color='navy' " +
+                "and contains(text(), 'Posted') or contains(text(), 'posted')]");
+            if (dateFromSizeAndColor != null || !string.IsNullOrWhiteSpace(dateFromSizeAndColor.InnerText))
+            {
+                string cleanedDateFromSizeAndColor = dateFromSizeAndColor.InnerText.Trim();
+                return HtmlParsingHelper.ConvertStringToDate(cleanedDateFromSizeAndColor);
+            }
+
             return null;
         }
 
