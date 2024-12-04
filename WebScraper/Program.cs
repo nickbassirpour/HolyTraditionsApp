@@ -16,6 +16,7 @@ void ScrapeList(string url)
     {
         foreach (BaseArticleModel article in articles)
         {
+            // run and check for errors
             string fullUrl = "https://traditioninaction.org/" + article.Url;
             Scrape(fullUrl);
         }
