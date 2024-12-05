@@ -89,7 +89,7 @@ namespace WebScraper.Helpers
             return link;
         }
 
-        private static string AddDomainToLink(string link, string mainUrl, bool useTIADomain)
+        internal static string AddDomainToLink(string link, string mainUrl, bool useTIADomain)
         {
             string domain = useTIADomain ? "https://traditioninaction.org" : "";
 
