@@ -167,7 +167,7 @@ namespace WebScraper.Services
                 return HtmlParsingHelper.ConvertStringToDate(cleanedDateFromSizeAndColor);
             }
 
-            return null;
+            return null; //or nothing
         }
 
         public string GetThumbnailUrl(string splitHtmlBody)
