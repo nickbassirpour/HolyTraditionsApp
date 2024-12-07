@@ -17,16 +17,29 @@ void ScrapeList(string url)
         foreach (BaseArticleModel article in articles)
         {
             // run and check for errors
-            string fullUrl = "https://traditioninaction.org/" + article.Url;
-            Scrape(fullUrl);
+            Scrape(article.Url);
         }
     }
 
 }
 async void Scrape(string url)
 {
+    List<ArticleModel> articles = new List<ArticleModel>();
     ArticleScraperService webScraper = new ArticleScraperService(url);
-    webScraper.ScrapeArticle(); 
+    ArticleModel article = webScraper.ScrapeArticle();
+    Console.WriteLine(article.Url);
+    Console.WriteLine(article.Author);
+    Console.WriteLine(article.Title);
+    Console.WriteLine(article.ThumbnailURL);
+    Console.WriteLine(article.Category);
+    Console.WriteLine(article.SubCategory);
+    Console.WriteLine(article.Date);
+    Console.WriteLine(article.Series);
+    Console.WriteLine(article.SeriesNumber);
+    Console.WriteLine(article.Description);
+    Console.WriteLine(article.RelatedArticles);
+    
+    articles.Add(article); 
 }
 
 ScrapeList("https://traditioninaction.org/religious/n000rpForgottenTruths.htm#forgotten");

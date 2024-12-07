@@ -52,6 +52,10 @@ namespace WebScraper.Helpers
         internal static void FixImageUrls(HtmlNode htmlBody, string url)
         {
             HtmlNodeCollection imageNodes = htmlBody.SelectNodes("//img[@src]");
+            if (imageNodes == null)
+            {
+                return;
+            }
             foreach (HtmlNode imageNode in imageNodes)
             {
                 string imageSrc = imageNode.GetAttributeValue("src", null);

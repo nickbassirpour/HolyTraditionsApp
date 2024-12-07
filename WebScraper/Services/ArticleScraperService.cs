@@ -30,8 +30,8 @@ namespace WebScraper.Services
             articleModel.Url = _url;
             articleModel.Category = category;
             articleModel.SubCategory = GetSubCategory(category);
-            articleModel.Series = GetSeriesNameAndNumber()[0];
-            articleModel.SeriesNumber = GetSeriesNameAndNumber()[1];
+            articleModel.Series = GetSeriesNameAndNumber() != null ? GetSeriesNameAndNumber()[0] : null;
+            articleModel.SeriesNumber = GetSeriesNameAndNumber() != null ? GetSeriesNameAndNumber()[1] : null;
             articleModel.Title = GetTitle();
             articleModel.Author = GetAuthor();
             articleModel.BodyHtml = GetBody(splitHtmlBody);
@@ -144,7 +144,7 @@ namespace WebScraper.Services
             if (category == "bev")
             {
                 HtmlNode? dateFromBEV = _htmlDoc.DocumentNode.Descendants().FirstOrDefault(node => node.Id == "topicHeader" || node.Element("h3") != null);
-                if (dateFromBEV != null || !string.IsNullOrWhiteSpace(dateFromBEV.InnerText))
+                if (!string.IsNullOrWhiteSpace(dateFromBEV?.InnerText))
                 {
                     string cleanedDateFromBEV = dateFromBEV.InnerText.Replace("NEWS:", "").Replace("News:", "").Replace("news:", "").Trim();
                     return HtmlParsingHelper.ConvertStringToDate(cleanedDateFromBEV);
@@ -152,8 +152,8 @@ namespace WebScraper.Services
                 return null;
             }
 
-            HtmlNode? dateFromId = _htmlDoc.DocumentNode.SelectSingleNode("//*[@id='posted' or @id='sitation'");
-            if (dateFromId != null || !string.IsNullOrWhiteSpace(dateFromId.InnerText))
+            HtmlNode? dateFromId = _htmlDoc.DocumentNode.SelectSingleNode("//*[@id=\'posted\' or @id=\'sitation\']");
+            if (!string.IsNullOrWhiteSpace(dateFromId?.InnerText))
             {
                 string cleanedDateFromId = dateFromId.InnerText.Trim();
                 return HtmlParsingHelper.ConvertStringToDate(cleanedDateFromId);
@@ -161,7 +161,7 @@ namespace WebScraper.Services
 
             HtmlNode? dateFromSizeAndColor = _htmlDoc.DocumentNode.SelectSingleNode("//*[@size='1' and @color='navy' " +
                 "and contains(text(), 'Posted') or contains(text(), 'posted')]");
-            if (dateFromSizeAndColor != null || !string.IsNullOrWhiteSpace(dateFromSizeAndColor.InnerText))
+            if (!string.IsNullOrWhiteSpace(dateFromSizeAndColor?.InnerText))
             {
                 string cleanedDateFromSizeAndColor = dateFromSizeAndColor.InnerText.Trim();
                 return HtmlParsingHelper.ConvertStringToDate(cleanedDateFromSizeAndColor);
@@ -170,10 +170,14 @@ namespace WebScraper.Services
             return null; //or nothing
         }
 
-        public string GetThumbnailUrl(string splitHtmlBody)
+        public string? GetThumbnailUrl(string splitHtmlBody)
         {
             HtmlDocument splitBodyNode = HtmlParsingHelper.LoadHtmlDocument(splitHtmlBody);
             HtmlNode? firstImageUrl = splitBodyNode.DocumentNode.SelectSingleNode("//img[1]");
+            if (firstImageUrl == null)
+            {
+                return null;
+            }
             string src = firstImageUrl.GetAttributeValue("src", string.Empty);
             string srcWithDomain = HtmlParsingHelper.AddDomainToLink(src, _url, true);
             return srcWithDomain;
