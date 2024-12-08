@@ -24,6 +24,11 @@ namespace WebScraper.Services
         public ArticleModel ScrapeArticle()
         {
             string splitHtmlBody = HtmlParsingHelper.SplitHtmlBody(_htmlDoc);
+
+            if (splitHtmlBody == null)
+            {
+                return null;
+            }
             string category = HtmlParsingHelper.GetCategoryFromURL(_url);
 
             ArticleModel articleModel = new ArticleModel();
@@ -59,15 +64,15 @@ namespace WebScraper.Services
 
         private List<BaseArticleModel>? GetRelatedArticles(string htmlBody)
         {
-            string bottomOfArticle = _htmlDoc.DocumentNode.InnerHtml.Split("Related Topics of Interest</div>")[1];
-            List<BaseArticleModel> relatedArticles = new List<BaseArticleModel>();
+            List<string> splitArticleParts = _htmlDoc.DocumentNode.InnerHtml.Split("Related Topics of Interest").ToList();
 
-            if (bottomOfArticle == null)
+            if (splitArticleParts.Count() == 1)
             {
                 return null;
             }
 
-            IEnumerable<HtmlNode> linkElements = HtmlParsingHelper.GetLinkElements(bottomOfArticle);
+            List<BaseArticleModel> relatedArticles = new List<BaseArticleModel>();
+            IEnumerable<HtmlNode> linkElements = HtmlParsingHelper.GetLinkElements(splitArticleParts[1]);
 
             if (linkElements.Count() == 0)
             {
@@ -77,11 +82,11 @@ namespace WebScraper.Services
             foreach (HtmlNode linkElement in linkElements)
             {
                 if (String.IsNullOrWhiteSpace(linkElement.InnerText)) continue;
-                if (linkElement.InnerText.MatchesAnyOf(ScrapingHelper.linksNotToScrape)) continue;
+                if (linkElement.InnerText.MatchesAnyOf(ScrapingHelper.linkTextsNotToScrape)) continue;
 
                 relatedArticles.Add(new BaseArticleModel()
                 {
-                    Url = linkElement.GetAttributeValue("href", ""),
+                    Url = HtmlParsingHelper.CleanLink(linkElement.GetAttributeValue("href", ""), _url, true),
                     Title = linkElement.InnerText,
                 });
             }
@@ -102,28 +107,44 @@ namespace WebScraper.Services
 
         public string? GetTitle()
         {
-            HtmlNode? title = _htmlDoc.DocumentNode.Descendants().FirstOrDefault(node => node.Name == "h1" || node.Name == "h4");
-            if (title == null)
+            HtmlNode? titleFromHTags = _htmlDoc.DocumentNode.Descendants().FirstOrDefault(node => node.Name == "h1" || node.Name == "h4");
+            if (titleFromHTags != null)
             {
-                return null;
+                return titleFromHTags.InnerText.Trim();
             }
-            return title.InnerText.Trim();
+
+            HtmlNode? titleFromSizeAndColor = _htmlDoc.DocumentNode.SelectSingleNode("//*[@size=6 and @color='maroon']");
+            if (titleFromSizeAndColor != null)
+            {
+                return titleFromSizeAndColor.InnerText.Trim();
+            }
+
+            return null;
         }
 
         public List<string?> GetAuthor()
         {
-            HtmlNode? author = _htmlDoc.DocumentNode.SelectSingleNode("//*[@class='author']");
-            if (author == null)
+            HtmlNode? authorFromAuthorClass = _htmlDoc.DocumentNode.SelectSingleNode("//*[@class='author']");
+            if (authorFromAuthorClass != null)
             {
-                return null;
+                return SplitAuthors(authorFromAuthorClass);
             }
 
-            List<string> authors = author.InnerText.Trim()
+            HtmlNode? authorFromSizeAndColor = _htmlDoc.DocumentNode.SelectSingleNode("//*[@size=4 and @color='PURPLE']");
+            if (authorFromSizeAndColor != null)
+            {
+                return SplitAuthors(authorFromSizeAndColor);
+            }
+
+            return null;
+        }
+
+        public List<string> SplitAuthors(HtmlNode authorText)
+        {
+            return authorText.InnerText.Trim()
                 .Split(new[] { "and", ",", "&" }, StringSplitOptions.RemoveEmptyEntries)
                 .Select(author => author.Trim())
                 .ToList();
-
-            return authors;
         }
 
         public string GetBody(string htmlBody)

@@ -24,12 +24,17 @@ namespace WebScraper.Helpers
             IEnumerable<HtmlNode> linkElements = htmlDocument.DocumentNode.SelectNodes("//a");
             return linkElements;
         }
-        internal static string SplitHtmlBody(HtmlDocument htmlDoc)
+        internal static string? SplitHtmlBody(HtmlDocument htmlDoc)
         {
             string htmlBodyNode = htmlDoc.DocumentNode.InnerHtml;
-            string splitHtmlBody = htmlBodyNode.Split("alt=\"contact\">")[1];
-            string cleanedHtmlBody = Regex.Split(splitHtmlBody, @"<!-- AddToAny BEGIN -->", RegexOptions.Singleline)[0];
-            return cleanedHtmlBody;
+            List<string> splitHtmlBody = htmlBodyNode.Split("alt=\"contact\">").ToList();
+            if (splitHtmlBody.Count > 0)
+            {
+                string cleanedHtmlBody = Regex.Split(splitHtmlBody[0], @"<!-- AddToAny BEGIN -->", RegexOptions.Singleline)[0];
+                return cleanedHtmlBody;
+            }
+
+            return null;
         }
         internal static HtmlNode ParseBody(HtmlNode node, string url)
         {

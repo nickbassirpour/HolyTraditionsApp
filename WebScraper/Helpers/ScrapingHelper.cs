@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,14 +19,15 @@ namespace WebScraper.Helpers
         internal static bool IsNullOrBadLink(this HtmlNode linkElement)
         {
             if (String.IsNullOrWhiteSpace(linkElement.InnerText)) return true;
-            if (linkElement.InnerText.MatchesAnyOf(ScrapingHelper.linksNotToScrape.ToArray())) return true;
+            if (linkElement.InnerText.MatchesAnyOf(ScrapingHelper.linkTextsNotToScrape.ToArray())) return true;
             HtmlNodeCollection aTags = linkElement.SelectNodes(".//a");
             if (aTags.Any(a => String.IsNullOrWhiteSpace(a.InnerText))) return true;
+            if (aTags.Any(a => a.GetAttributeValue("href", null).MatchesAnyOf(ScrapingHelper.linksNotToScrape.ToArray()))) return true;
             if (aTags == null || aTags.Count == 0 || aTags.Count > 1) return true;
             return false;
         }
 
-        internal static string[] linksNotToScrape = new string[]
+        internal static string[] linkTextsNotToScrape = new string[]
         {
             "home",
             "books",
@@ -38,6 +40,12 @@ namespace WebScraper.Helpers
             "news",
             "archives"
         };
+
+        internal static string[] linksNotToScrape = new string[]
+        {
+            "n000rpForgottenTruths.htm#forgotten"
+        };
+
 
         internal static string[] linksWithNoDescription = new string[]
         {
