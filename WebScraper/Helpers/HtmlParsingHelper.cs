@@ -28,7 +28,7 @@ namespace WebScraper.Helpers
         {
             string htmlBodyNode = htmlDoc.DocumentNode.InnerHtml;
             string splitHtmlBody = htmlBodyNode.Split("alt=\"contact\">")[1];
-            string cleanedHtmlBody = Regex.Split(splitHtmlBody, @"<!-- AddToAny BEGIN -->.*?<!-- AddToAny END -->", RegexOptions.Singleline)[0];
+            string cleanedHtmlBody = Regex.Split(splitHtmlBody, @"<!-- AddToAny BEGIN -->", RegexOptions.Singleline)[0];
             return cleanedHtmlBody;
         }
         internal static HtmlNode ParseBody(HtmlNode node, string url)
