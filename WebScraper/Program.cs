@@ -22,7 +22,7 @@ void ScrapeList(string url)
     }
 
 }
-async void Scrape(string url)
+void Scrape(string url)
 {
     List<ArticleModel> articles = new List<ArticleModel>();
     ArticleScraperService webScraper = new ArticleScraperService(url);
