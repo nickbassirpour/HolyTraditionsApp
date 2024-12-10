@@ -113,7 +113,7 @@ namespace WebScraper.Services
                 return titleFromHTags.InnerText.Trim();
             }
 
-            HtmlNode? titleFromSizeAndColor = _htmlDoc.DocumentNode.SelectSingleNode("//*[@size=6 and @color='maroon']");
+            HtmlNode? titleFromSizeAndColor = _htmlDoc.DocumentNode.SelectSingleNode("//*[@size=6 and @color='maroon' or @size=6 and @color='#800000']");
             if (titleFromSizeAndColor != null)
             {
                 return titleFromSizeAndColor.InnerText.Trim();

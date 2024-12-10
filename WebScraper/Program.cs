@@ -29,17 +29,18 @@ void Scrape(string url)
     ArticleModel article = webScraper.ScrapeArticle();
     if (article != null)
     {
-        Console.WriteLine(article.Url);
-        Console.WriteLine(article.Author);
-        Console.WriteLine(article.Title);
-        Console.WriteLine(article.ThumbnailURL);
-        Console.WriteLine(article.Category);
-        Console.WriteLine(article.SubCategory);
-        Console.WriteLine(article.Date);
-        Console.WriteLine(article.Series);
-        Console.WriteLine(article.SeriesNumber);
-        Console.WriteLine(article.Description);
-        Console.WriteLine(article.RelatedArticles);
+        Console.WriteLine();
+        Console.WriteLine("Url: " + article.Url);
+        Console.WriteLine("Author: " + article.Author?[0]);
+        Console.WriteLine("Title: " + article.Title);
+        Console.WriteLine("ThumbnailURL: " + article.ThumbnailURL);
+        Console.WriteLine("Category: " + article.Category);
+        Console.WriteLine("SubCategory: " + article.SubCategory);
+        Console.WriteLine("Date: " + article.Date?.ToString());
+        Console.WriteLine("Series: " + article.Series);
+        Console.WriteLine("SeriesNumber: " + article.SeriesNumber);
+        Console.WriteLine("Description: " + article.Description);
+        Console.WriteLine("RelatedArticles: " + article.RelatedArticles);
     
         articles.Add(article); 
     }
