@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using WebScraper.Enums;
-using DataAccessLibrary.Models;
+using TIAArticleAppAPI.Models;
 
 namespace WebScraper.Helpers
 {

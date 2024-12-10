@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WebScraper.Helpers;
-using DataAccessLibrary.Models;
+using TIAArticleAppAPI.Models;
 using WebScraper.Validation;
 
 namespace WebScraper.Services

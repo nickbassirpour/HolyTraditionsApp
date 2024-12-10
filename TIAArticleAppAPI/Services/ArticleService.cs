@@ -1,4 +1,4 @@
-﻿using DataAccessLibrary.Models;
+﻿using TIAArticleAppAPI.Models;
 using TIAArticleAppAPI.Data;
 
 namespace TIAArticleAppAPI.Services

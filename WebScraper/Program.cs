@@ -3,7 +3,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
-using DataAccessLibrary.Models;
+using TIAArticleAppAPI.Models;
 using WebScraper.Enums;
 using WebScraper.Services;
 using WebScraper.Validation;

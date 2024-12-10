@@ -5,7 +5,7 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using WebScraper.Helpers;
 using WebScraper.Validation;
-using DataAccessLibrary.Models;
+using TIAArticleAppAPI.Models;
 
 namespace WebScraper.Services
 {
