@@ -42,7 +42,7 @@ void Scrape(string url)
         Console.WriteLine("Description: " + article.Description);
         Console.WriteLine("RelatedArticles: " + article.RelatedArticles);
     
-        articles.Add(article); 
+        articles.Add(article); //add proper validfation
     }
 }
 
