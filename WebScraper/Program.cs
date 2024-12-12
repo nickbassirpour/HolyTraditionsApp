@@ -16,7 +16,7 @@ void ScrapeList(string url)
     {
         foreach (BaseArticleModel article in articles)
         {
-            // run and check for errors
+            // run and check for errors I'm the worst
             Scrape(article.Url);
         }
     }
