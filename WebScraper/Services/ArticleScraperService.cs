@@ -19,7 +19,6 @@ namespace WebScraper.Services
         public ArticleScraperService(string url)
         {
             _url = url;
-
             HtmlWeb web = new HtmlWeb { OverrideEncoding = Encoding.UTF8 };
             _htmlDoc = web.Load(url);
         }
@@ -40,7 +39,7 @@ namespace WebScraper.Services
             articleModel.SubCategory = GetSubCategory(category);
             articleModel.Series = GetSeriesNameAndNumber() != null ? GetSeriesNameAndNumber()[0] : null;
             articleModel.SeriesNumber = GetSeriesNameAndNumber() != null ? GetSeriesNameAndNumber()[1] : null;
-            articleModel.Title = GetTitle();
+            articleModel.Title = GetTitle(category);
             articleModel.Author = GetAuthor(category);
             articleModel.BodyHtml = GetBody(splitHtmlBody);
             articleModel.BodyInnerText = GetBodyInnerText(splitHtmlBody);
@@ -129,25 +128,45 @@ namespace WebScraper.Services
             return null;
         }
 
-        public string? GetTitle()
+        public string? GetTitle(string category)
         {
+            if (category == "RevolutionPhotos")
+            {
+                HtmlNode? titleForRevolutionPhotos = _htmlDoc.DocumentNode.SelectSingleNode("//*[@size=4 and @color='#800000']");
+                if (titleForRevolutionPhotos != null)
+                {
+                    return titleForRevolutionPhotos.InnerText.Trim();
+                }
+            }
+
             HtmlNode? titleFromHTags = _htmlDoc.DocumentNode.Descendants().FirstOrDefault(node => node.Name == "h1" || node.Name == "h4");
             if (titleFromHTags != null)
             {
                 return titleFromHTags.InnerText.Trim();
             }
 
-            HtmlNode? titleFromSizeAndColor = _htmlDoc.DocumentNode.SelectSingleNode("//*[@size=6 and @color='maroon' or @size=6 and @color='#800000']");
-            if (titleFromSizeAndColor != null)
+            HtmlNode? titleFromSizeAndColorMaroon = _htmlDoc.DocumentNode.SelectSingleNode("//*[@size=6 and @color='maroon' or @size=6 and @color='#800000']");
+            if (titleFromSizeAndColorMaroon != null)
             {
-                return titleFromSizeAndColor.InnerText.Trim();
+                return titleFromSizeAndColorMaroon.InnerText.Trim();
             }
-           
+
+            HtmlNode? titleFromSizeAndColor99000 = _htmlDoc.DocumentNode.SelectSingleNode("//*[@size=6 and @color='#990000']");
+            if (titleFromSizeAndColor99000 != null)
+            {
+                return titleFromSizeAndColor99000.InnerText.Trim();
+            }
+
             return null;
         }
 
         public List<string?> GetAuthor(string category)
         {
+            if (category == "RevolutionPhotos")
+            {
+                return null;
+            }
+
             if (category == "bev")
             {
                 List<string> atilaAuthorList = new List<string> { "Atila S. Guimarães" };
@@ -158,6 +177,12 @@ namespace WebScraper.Services
             if (authorFromAuthorClass != null)
             {
                 return SplitAuthors(authorFromAuthorClass);
+            }
+
+            HtmlNode? authorFromSizeAndId = _htmlDoc.DocumentNode.SelectSingleNode("//*[@size=4 and @id='R']");
+            if (authorFromSizeAndId != null)
+            {
+                return SplitAuthors(authorFromSizeAndId);
             }
 
             HtmlNode? authorFromSizeAndColor = _htmlDoc.DocumentNode.SelectSingleNode("//*[@size=4 and @color='PURPLE']");

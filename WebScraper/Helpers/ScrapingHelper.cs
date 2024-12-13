@@ -29,7 +29,6 @@ namespace WebScraper.Helpers
             if (aTags == null || aTags.Count == 0 || aTags.Count > 1) return true;
             if (aTags.Any(a => String.IsNullOrWhiteSpace(a.InnerText))) return true;
             if (aTags.Any(a => a.GetAttributeValue("href", null).MatchesAnyOf(ScrapingHelper.linksNotToScrape.ToArray()))) return true;
-            if (aTags.Any(a => a.GetAttributeValue("href", null).ContainsAnyOf(ScrapingHelper.textInLinksNotToScrape.ToArray()))) return true;
             return false;
         }
 
@@ -52,11 +51,6 @@ namespace WebScraper.Helpers
         internal static string[] linksNotToScrape = new string[]
         {
             "n000rpForgottenTruths.htm#forgotten"
-        };
-
-        internal static string[] textInLinksNotToScrape = new string[]
-        {
-            "Library"
         };
 
         internal static string[] linksWithNoDescription = new string[]

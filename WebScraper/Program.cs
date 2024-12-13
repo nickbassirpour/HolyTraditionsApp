@@ -16,6 +16,10 @@ void ScrapeList(string url)
     {
         foreach (BaseArticleModel article in articles)
         {
+            if (article.Url.EndsWith(".pdf"))
+            {
+                continue;
+            }
             // run and check for errors I'm the worst
             Scrape(article);
         }
@@ -70,7 +74,6 @@ void ScrapeUrl(string url)
     }
 }
 
-ScrapeUrl("https://traditioninaction.org/Library/texts/C_001_Tribalism.pdf");
 
 // Birds Eye View of the News
 //ScrapeList("https://traditioninaction.org/bev/news.htm");
@@ -79,16 +82,16 @@ ScrapeUrl("https://traditioninaction.org/Library/texts/C_001_Tribalism.pdf");
 //ScrapeList("https://traditioninaction.org/HotTopics/R000-Transhumanism.html");
 //ScrapeList("https://traditioninaction.org/HotTopics/a01Pedophilia_crisis.htm#crisis");
 //ScrapeList("https://traditioninaction.org/HotTopics/a02Homo&Clergy.html#dancing");
-ScrapeList("https://traditioninaction.org/HotTopics/a00ConsequencesIndex.html#vatican");
-ScrapeList("https://traditioninaction.org/HotTopics/b00EcumenismIndex.html#ecumenism");
-ScrapeList("https://traditioninaction.org/HotTopics/b01CrisisInEcumenism.htm#crisis");
-ScrapeList("https://traditioninaction.org/HotTopics/i000htPoliticsIndex.html#affairs");
-ScrapeList("https://traditioninaction.org/HotTopics/j000htSocialPoliticalIndex.html#social");
-ScrapeList("https://traditioninaction.org/HotTopics/f000TradIssuesIndex.html#trad");
-ScrapeList("https://traditioninaction.org/HotTopics/g00FatimaIndex.html#fatima");
-ScrapeList("https://traditioninaction.org/HotTopics/d000htFeminismIndex.html#feminism");
-ScrapeList("https://traditioninaction.org/HotTopics/k00CanonizationsIndex.html#factory");
-ScrapeList("https://traditioninaction.org/HotTopics/e001htWarIndex.html#war");
+//ScrapeList("https://traditioninaction.org/HotTopics/a00ConsequencesIndex.html#vatican");
+//ScrapeList("https://traditioninaction.org/HotTopics/b00EcumenismIndex.html#ecumenism");
+//ScrapeList("https://traditioninaction.org/HotTopics/b01CrisisInEcumenism.htm#crisis");
+//ScrapeList("https://traditioninaction.org/HotTopics/i000htPoliticsIndex.html#affairs");
+//ScrapeList("https://traditioninaction.org/HotTopics/j000htSocialPoliticalIndex.html#social");
+//ScrapeList("https://traditioninaction.org/HotTopics/f000TradIssuesIndex.html#trad");
+//ScrapeList("https://traditioninaction.org/HotTopics/g00FatimaIndex.html#fatima");
+//ScrapeList("https://traditioninaction.org/HotTopics/d000htFeminismIndex.html#feminism");
+//ScrapeList("https://traditioninaction.org/HotTopics/k00CanonizationsIndex.html#factory");
+//ScrapeList("https://traditioninaction.org/HotTopics/e001htWarIndex.html#war");
 ScrapeList("https://traditioninaction.org/HotTopics/c000ArtIndexht.html#art");
 //Scrape("https://traditioninaction.org/religious/n002rpLapide_Appearance.htm");
 

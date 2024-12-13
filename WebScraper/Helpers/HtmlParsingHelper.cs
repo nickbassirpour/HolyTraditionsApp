@@ -30,7 +30,7 @@ namespace WebScraper.Helpers
             List<string> splitHtmlBody = htmlBodyNode.Split("alt=\"contact\">").ToList();
             if (splitHtmlBody.Count > 0)
             {
-                string cleanedHtmlBody = Regex.Split(splitHtmlBody[0], @"<!-- AddToAny BEGIN -->", RegexOptions.Singleline)[0];
+                string cleanedHtmlBody = Regex.Split(splitHtmlBody[1], @"<!-- AddToAny BEGIN -->", RegexOptions.Singleline)[0];
                 return cleanedHtmlBody;
             }
 
@@ -122,7 +122,7 @@ namespace WebScraper.Helpers
 
         internal static string? ConvertStringToDate(string date)
         {
-            string dateWithoutPosted = date.Replace("Posted", " ").Replace("posted ", "").Replace("&nbsp;", "").Trim();
+            string dateWithoutPosted = date.Split("Posted")[1].Trim().Replace("--", "01");
             if (DateTime.TryParse(dateWithoutPosted, out DateTime parsedDate))
             {
                 string formattedDate = parsedDate.ToString("yyyy-MM-dd");
