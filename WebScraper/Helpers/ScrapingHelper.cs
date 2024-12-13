@@ -16,14 +16,20 @@ namespace WebScraper.Helpers
             return targets.Any(target => target.Equals(value, StringComparison.OrdinalIgnoreCase));
         }
 
+        internal static bool ContainsAnyOf(this string value, params string[] targets)
+        {
+            return targets.Any(target => target.Contains(value, StringComparison.OrdinalIgnoreCase));
+        }
+
         internal static bool IsNullOrBadLink(this HtmlNode linkElement)
         {
             if (String.IsNullOrWhiteSpace(linkElement.InnerText)) return true;
             if (linkElement.InnerText.MatchesAnyOf(ScrapingHelper.linkTextsNotToScrape.ToArray())) return true;
             HtmlNodeCollection aTags = linkElement.SelectNodes(".//a");
+            if (aTags == null || aTags.Count == 0 || aTags.Count > 1) return true;
             if (aTags.Any(a => String.IsNullOrWhiteSpace(a.InnerText))) return true;
             if (aTags.Any(a => a.GetAttributeValue("href", null).MatchesAnyOf(ScrapingHelper.linksNotToScrape.ToArray()))) return true;
-            if (aTags == null || aTags.Count == 0 || aTags.Count > 1) return true;
+            if (aTags.Any(a => a.GetAttributeValue("href", null).ContainsAnyOf(ScrapingHelper.textInLinksNotToScrape.ToArray()))) return true;
             return false;
         }
 
@@ -38,7 +44,9 @@ namespace WebScraper.Helpers
             "forgotten truths",
             "religious",
             "news",
-            "archives"
+            "archives",
+            "hot topics",
+            "consequences"
         };
 
         internal static string[] linksNotToScrape = new string[]
@@ -46,6 +54,10 @@ namespace WebScraper.Helpers
             "n000rpForgottenTruths.htm#forgotten"
         };
 
+        internal static string[] textInLinksNotToScrape = new string[]
+        {
+            "Library"
+        };
 
         internal static string[] linksWithNoDescription = new string[]
         {

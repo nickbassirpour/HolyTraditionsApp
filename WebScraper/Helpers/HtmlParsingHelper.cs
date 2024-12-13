@@ -122,9 +122,10 @@ namespace WebScraper.Helpers
 
         internal static string? ConvertStringToDate(string date)
         {
-            if (DateTime.TryParse(date, out DateTime parsedDate))
+            string dateWithoutPosted = date.Replace("Posted", " ").Replace("posted ", "").Replace("&nbsp;", "").Trim();
+            if (DateTime.TryParse(dateWithoutPosted, out DateTime parsedDate))
             {
-                string formattedDate = parsedDate.ToString("yyyy-MM-DD");
+                string formattedDate = parsedDate.ToString("yyyy-MM-dd");
                 return formattedDate;
             }
             else

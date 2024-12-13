@@ -6,6 +6,9 @@ using System.Text.RegularExpressions;
 using WebScraper.Helpers;
 using WebScraper.Validation;
 using TIAArticleAppAPI.Models;
+using static System.Net.Mime.MediaTypeNames;
+using System.Drawing;
+using Microsoft.AspNetCore.Builder;
 
 namespace WebScraper.Services
 {
@@ -38,7 +41,7 @@ namespace WebScraper.Services
             articleModel.Series = GetSeriesNameAndNumber() != null ? GetSeriesNameAndNumber()[0] : null;
             articleModel.SeriesNumber = GetSeriesNameAndNumber() != null ? GetSeriesNameAndNumber()[1] : null;
             articleModel.Title = GetTitle();
-            articleModel.Author = GetAuthor();
+            articleModel.Author = GetAuthor(category);
             articleModel.BodyHtml = GetBody(splitHtmlBody);
             articleModel.BodyInnerText = GetBodyInnerText(splitHtmlBody);
             articleModel.ThumbnailURL = GetThumbnailUrl(splitHtmlBody);
@@ -54,12 +57,19 @@ namespace WebScraper.Services
                 return category;
             }
 
-            HtmlNode? topic = _htmlDoc.DocumentNode.Descendants().FirstOrDefault(node => node.Id == "topicHeader" || node.Element("h3") != null);
-            if (topic == null)
+            HtmlNode? categoryFromTopicHeaderOrH3 = _htmlDoc.DocumentNode.Descendants().FirstOrDefault(node => node.Id == "topicHeader" || node.Element("h3") != null);
+            if (categoryFromTopicHeaderOrH3 != null)
             {
-                return null;
+                return categoryFromTopicHeaderOrH3.InnerText.Trim();
             }
-            return topic.InnerText.Trim();
+
+            HtmlNode? categoryFromColorAndSize = _htmlDoc.DocumentNode.SelectSingleNode(".//*[@color='#800000' and @size='2']");
+            if (categoryFromColorAndSize != null)
+            {
+                return categoryFromColorAndSize.InnerText.Trim();
+            }
+
+            return null;
         }
 
         private List<BaseArticleModel>? GetRelatedArticles(string htmlBody)
@@ -94,15 +104,29 @@ namespace WebScraper.Services
             return relatedArticles;
         }
 
-        public string?[] GetSeriesNameAndNumber()
+        public List<string?> GetSeriesNameAndNumber()
         {
             HtmlNode? series = _htmlDoc.DocumentNode.SelectSingleNode("//*[@class='GreenSeries']");
             if (series == null || string.IsNullOrWhiteSpace(series.InnerText))
             {
                 return null;
             }
-            string[] seriesParts = series.InnerText.Trim().Split(" - ");
-            return seriesParts;
+
+            List<string> seriesParts = new List<string>();
+
+            if (series.InnerText.Contains("-"))
+            {
+                seriesParts = series.InnerText.Trim().Split(" - ").ToList();
+                return seriesParts;
+            }
+
+            if (series.InnerText.Contains("–"))
+            {
+                seriesParts = series.InnerText.Trim().Split(" – ").ToList();
+                return seriesParts;
+            }
+
+            return null;
         }
 
         public string? GetTitle()
@@ -118,12 +142,18 @@ namespace WebScraper.Services
             {
                 return titleFromSizeAndColor.InnerText.Trim();
             }
-
+           
             return null;
         }
 
-        public List<string?> GetAuthor()
+        public List<string?> GetAuthor(string category)
         {
+            if (category == "bev")
+            {
+                List<string> atilaAuthorList = new List<string> { "Atila S. Guimarães" };
+                return atilaAuthorList;
+            }
+
             HtmlNode? authorFromAuthorClass = _htmlDoc.DocumentNode.SelectSingleNode("//*[@class='author']");
             if (authorFromAuthorClass != null)
             {
@@ -167,8 +197,8 @@ namespace WebScraper.Services
                 HtmlNode? dateFromBEV = _htmlDoc.DocumentNode.Descendants().FirstOrDefault(node => node.Id == "topicHeader" || node.Element("h3") != null);
                 if (!string.IsNullOrWhiteSpace(dateFromBEV?.InnerText))
                 {
-                    string cleanedDateFromBEV = dateFromBEV.InnerText.Replace("NEWS:", "").Replace("News:", "").Replace("news:", "").Trim();
-                    return HtmlParsingHelper.ConvertStringToDate(cleanedDateFromBEV);
+                    string cleanedDateFromBEV = dateFromBEV.InnerText.Replace("NEWS:", "").Replace("News:", "").Replace("news:", "");
+                    return HtmlParsingHelper.ConvertStringToDate(cleanedDateFromBEV.Trim());
                 }
                 return null;
             }
@@ -176,17 +206,25 @@ namespace WebScraper.Services
             HtmlNode? dateFromId = _htmlDoc.DocumentNode.SelectSingleNode("//*[@id=\'posted\' or @id=\'sitation\']");
             if (!string.IsNullOrWhiteSpace(dateFromId?.InnerText))
             {
-                string cleanedDateFromId = dateFromId.InnerText.Trim();
+                string cleanedDateFromId = dateFromId.InnerText;
                 return HtmlParsingHelper.ConvertStringToDate(cleanedDateFromId);
             }
 
-            HtmlNode? dateFromSizeAndColor = _htmlDoc.DocumentNode.SelectSingleNode("//*[@size='1' and @color='navy' " +
+            HtmlNode? dateFromSize1AndColorNavy = _htmlDoc.DocumentNode.SelectSingleNode("//*[@size='1' and @color='navy'" +
                 "and contains(text(), 'Posted') or contains(text(), 'posted')]");
-            if (!string.IsNullOrWhiteSpace(dateFromSizeAndColor?.InnerText))
+            if (!string.IsNullOrWhiteSpace(dateFromSize1AndColorNavy?.InnerText))
             {
-                string cleanedDateFromSizeAndColor = dateFromSizeAndColor.InnerText.Trim();
+                string cleanedDateFromSizeAndColor = dateFromSize1AndColorNavy.InnerText;
                 return HtmlParsingHelper.ConvertStringToDate(cleanedDateFromSizeAndColor);
             }
+
+            HtmlNode? dateFromSize1AndColor000080 = _htmlDoc.DocumentNode.SelectSingleNode("//*[@size='1' and @color='#000080'" +
+                "and contains(text(), 'Posted') or contains(text(), 'posted')]");
+            if (!string.IsNullOrWhiteSpace(dateFromSize1AndColor000080?.InnerText))
+            {
+                string cleanedDateFromSizeAndColor = dateFromSize1AndColor000080.InnerText;
+                return HtmlParsingHelper.ConvertStringToDate(cleanedDateFromSizeAndColor);
+            };
 
             return null; //or nothing
         }

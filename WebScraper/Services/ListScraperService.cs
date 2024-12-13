@@ -33,7 +33,20 @@ namespace WebScraper.Services
             {
                 if (linkElement.IsNullOrBadLink()) continue;
                 BaseArticleModel articleModel = GetBaseArticle(linkElement);
-                articleLinks.Add(GetBaseArticle(linkElement));
+                if (articleLinks.Count < 10)
+                {
+                    articleLinks.Add(articleModel);
+                }
+            }
+
+            foreach (HtmlNode linkElement in linkElements.Reverse())
+            {
+                if (linkElement.IsNullOrBadLink()) continue;
+                BaseArticleModel articleModel = GetBaseArticle(linkElement);
+                if (articleLinks.Count < 20)
+                {
+                    articleLinks.Add(articleModel);
+                }
             }
 
             return articleLinks;
