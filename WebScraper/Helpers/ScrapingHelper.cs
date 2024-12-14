@@ -29,6 +29,7 @@ namespace WebScraper.Helpers
             if (aTags == null || aTags.Count == 0 || aTags.Count > 1) return true;
             if (aTags.Any(a => String.IsNullOrWhiteSpace(a.InnerText))) return true;
             if (aTags.Any(a => a.GetAttributeValue("href", null).MatchesAnyOf(ScrapingHelper.linksNotToScrape.ToArray()))) return true;
+            if (!aTags.Any(a => a.GetAttributeValue("href", null).Contains("."))) return true;
             return false;
         }
 

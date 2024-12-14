@@ -126,7 +126,7 @@ namespace WebScraper.Helpers
             }
             else if (!link.Contains("http"))
             {
-                link = domain + link;
+                link = domain + "/" + link;
             }
             return link;    
         }

@@ -163,6 +163,12 @@ namespace WebScraper.Services
                 return titleFromSizeAndColor99000.InnerText.Trim();
             }
 
+            HtmlNode? titleFromSizeAndColorGreen = _htmlDoc.DocumentNode.SelectSingleNode("//*[@size=6 and @color='green']");
+            if (titleFromSizeAndColorGreen != null)
+            {
+                return titleFromSizeAndColorGreen.InnerText.Trim();
+            }
+
             return null;
         }
 
@@ -185,7 +191,7 @@ namespace WebScraper.Services
                 return SplitAuthors(authorFromAuthorClass);
             }
 
-            HtmlNode? authorFromSizeAndId = _htmlDoc.DocumentNode.SelectSingleNode("//*[@size=4 and @id='R']");
+            HtmlNode? authorFromSizeAndId = _htmlDoc.DocumentNode.SelectSingleNode("//*[@size=4 or @size=4 and @id='R']");
             if (authorFromSizeAndId != null)
             {
                 return SplitAuthors(authorFromSizeAndId);
