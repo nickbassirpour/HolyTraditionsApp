@@ -28,10 +28,27 @@ namespace WebScraper.Helpers
         {
             string htmlBodyNode = htmlDoc.DocumentNode.InnerHtml;
             List<string> splitHtmlBody = htmlBodyNode.Split("alt=\"contact\">").ToList();
-            if (splitHtmlBody.Count > 0)
+            if (splitHtmlBody.Count > 1)
             {
-                string cleanedHtmlBody = Regex.Split(splitHtmlBody[1], @"<!-- AddToAny BEGIN -->", RegexOptions.Singleline)[0];
-                return cleanedHtmlBody;
+                //src="images/A_contact.gif"
+                List<string> cleanedHtmlBodyList = Regex.Split(splitHtmlBody[1], @"<!-- AddToAny BEGIN -->", RegexOptions.Singleline).ToList();
+                if (cleanedHtmlBodyList.Count > 1)
+                {
+                    return cleanedHtmlBodyList[0];
+                }
+
+                //string cleanedHtmlBody = Regex.Split(splitHtmlBody[1], @"<!-- AddToAny BEGIN -->", RegexOptions.Singleline)[0];
+                //return cleanedHtmlBody;
+            }
+
+            List<string> splitHtmlBodyOnSrc = htmlBodyNode.Split("src=\"images/A_contact.gif").ToList();
+            if (splitHtmlBodyOnSrc.Count > 1)
+            {
+                List<string> cleanedHtmlBodyList = Regex.Split(splitHtmlBodyOnSrc[1], @"<!-- AddToAny BEGIN -->", RegexOptions.Singleline).ToList();
+                if (cleanedHtmlBodyList.Count > 1)
+                {
+                    return cleanedHtmlBodyList[0];
+                }
             }
 
             return null;

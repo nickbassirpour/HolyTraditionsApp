@@ -16,7 +16,7 @@ void ScrapeList(string url)
     {
         foreach (BaseArticleModel article in articles)
         {
-            if (article.Url.EndsWith(".pdf"))
+            if (article.Url.EndsWith(".pdf") || article.Url.Contains("tiabk"))
             {
                 continue;
             }
@@ -92,6 +92,8 @@ void ScrapeUrl(string url)
 //ScrapeList("https://traditioninaction.org/HotTopics/d000htFeminismIndex.html#feminism");
 //ScrapeList("https://traditioninaction.org/HotTopics/k00CanonizationsIndex.html#factory");
 //ScrapeList("https://traditioninaction.org/HotTopics/e001htWarIndex.html#war");
-ScrapeList("https://traditioninaction.org/HotTopics/c000ArtIndexht.html#art");
-//Scrape("https://traditioninaction.org/religious/n002rpLapide_Appearance.htm");
+//ScrapeList("https://traditioninaction.org/HotTopics/c000ArtIndexht.html#art");
+
+// Church Revolution in Pictures
+ScrapeList("https://traditioninaction.org/RevolutionPhotos/ChurchRevIndex.htm");
 

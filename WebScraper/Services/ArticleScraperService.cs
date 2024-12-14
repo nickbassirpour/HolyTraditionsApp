@@ -137,6 +137,12 @@ namespace WebScraper.Services
                 {
                     return titleForRevolutionPhotos.InnerText.Trim();
                 }
+
+                HtmlNode? titleFromHTagsChurchRev = _htmlDoc.DocumentNode.Descendants().FirstOrDefault(node => node.Name == "h1");
+                if (titleFromHTagsChurchRev != null)
+                {
+                    return titleFromHTagsChurchRev.InnerText.Trim();
+                }
             }
 
             HtmlNode? titleFromHTags = _htmlDoc.DocumentNode.Descendants().FirstOrDefault(node => node.Name == "h1" || node.Name == "h4");
