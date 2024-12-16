@@ -121,3 +121,5 @@ ScrapeList("https://www.traditioninaction.org/religious/a000rpDevotionsMainPage.
 //ScrapeList("https://www.traditioninaction.org/religious/Q000_Reels.htm");
 //ScrapeList("https://www.traditioninaction.org/Margil/mainpage.html");
 
+// need to move to separate class
+
