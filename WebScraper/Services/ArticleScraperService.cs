@@ -248,22 +248,37 @@ namespace WebScraper.Services
             }
 
             HtmlNode? dateFromSize1AndColorNavy = _htmlDoc.DocumentNode.SelectSingleNode("//*[@size='1' and @color='navy'" +
-                "and contains(text(), 'Posted') or contains(text(), 'posted')]");
+            "and contains(text(), 'Posted')]");
             if (!string.IsNullOrWhiteSpace(dateFromSize1AndColorNavy?.InnerText))
             {
                 string cleanedDateFromSizeAndColor = dateFromSize1AndColorNavy.InnerText;
                 return HtmlParsingHelper.ConvertStringToDate(cleanedDateFromSizeAndColor);
             }
 
+            HtmlNode? dateFromSize1AndColorNAVY = _htmlDoc.DocumentNode.SelectSingleNode("//*[@size='1' and @color='NAVY'" +
+                "and contains(text(), 'Posted')]");
+            if (!string.IsNullOrWhiteSpace(dateFromSize1AndColorNAVY?.InnerText))
+            {
+                string cleanedDateFromSizeAndColor = dateFromSize1AndColorNAVY.InnerText;
+                return HtmlParsingHelper.ConvertStringToDate(cleanedDateFromSizeAndColor);
+            };
+
             HtmlNode? dateFromSize1AndColor000080 = _htmlDoc.DocumentNode.SelectSingleNode("//*[@size='1' and @color='#000080'" +
-                "and contains(text(), 'Posted') or contains(text(), 'posted')]");
+                "and contains(text(), 'Posted')]");
             if (!string.IsNullOrWhiteSpace(dateFromSize1AndColor000080?.InnerText))
             {
                 string cleanedDateFromSizeAndColor = dateFromSize1AndColor000080.InnerText;
                 return HtmlParsingHelper.ConvertStringToDate(cleanedDateFromSizeAndColor);
             };
 
-            return null; //or nothing
+            HtmlNode? dateFromPostedOnly = _htmlDoc.DocumentNode.SelectSingleNode("//*[contains(text(), 'Posted')]");
+            if (!string.IsNullOrWhiteSpace(dateFromPostedOnly?.InnerText))
+            {
+                string cleanedDateFromSizeAndColor = dateFromSize1AndColorNAVY.InnerText;
+                return HtmlParsingHelper.ConvertStringToDate(cleanedDateFromSizeAndColor);
+            };
+
+            return null; 
         }
 
         public string? GetThumbnailUrl(string splitHtmlBody)

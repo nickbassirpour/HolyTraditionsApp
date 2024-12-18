@@ -98,7 +98,7 @@ void ScrapeUrl(string url)
 //ScrapeList("https://traditioninaction.org/RevolutionPhotos/ChurchRevIndex.htm");
 
 // Religious Topics
-ScrapeList("https://www.traditioninaction.org/religious/a000rpDevotionsMainPage.htm#devotions");
+//ScrapeList("https://www.traditioninaction.org/religious/a000rpDevotionsMainPage.htm#devotions");
 //ScrapeList("https://www.traditioninaction.org/OLGS/olgshome.htm");
 //ScrapeList("https://www.traditioninaction.org/SOD/saintsofday.htm");
 //ScrapeList("https://www.traditioninaction.org/religious/n000rpForgottenTruths.htm#forgotten");
@@ -113,13 +113,14 @@ ScrapeList("https://www.traditioninaction.org/religious/a000rpDevotionsMainPage.
 //ScrapeList("https://www.traditioninaction.org/religious/h000rpStoriesLegendsMainPage.html#stories");
 //ScrapeList("https://www.traditioninaction.org/religious/m000rpUnderstandCrisisMainPage.htm");
 
-//ScrapeList("https://www.traditioninaction.org/religious/e000rpUnderAttackMainPage.html#attack");
-//ScrapeList("https://www.traditioninaction.org/religious/g000rpFlashesonTheologyMainPage.html#history");
-//ScrapeList("https://www.traditioninaction.org/HotTopics/k00CanonizationsIndex.html#factory");
-//ScrapeList("https://www.traditioninaction.org/religious/b000rpPrayersMainPage.html#prayers");
-//ScrapeList("https://www.traditioninaction.org/religious/p000rpHymns.htm#hymns");
-//ScrapeList("https://www.traditioninaction.org/religious/Q000_Reels.htm");
-//ScrapeList("https://www.traditioninaction.org/Margil/mainpage.html");
+ScrapeList("https://www.traditioninaction.org/religious/e000rpUnderAttackMainPage.html#attack");
+ScrapeList("https://www.traditioninaction.org/religious/g000rpFlashesonTheologyMainPage.html#history");
+ScrapeList("https://www.traditioninaction.org/HotTopics/k00CanonizationsIndex.html#factory");
+ScrapeList("https://www.traditioninaction.org/religious/b000rpPrayersMainPage.html#prayers");
+ScrapeList("https://www.traditioninaction.org/religious/p000rpHymns.htm#hymns");
+ScrapeList("https://www.traditioninaction.org/religious/Q000_Reels.htm");
+ScrapeList("https://www.traditioninaction.org/Margil/mainpage.html");
+
 
 // need to move to separate class now
 
