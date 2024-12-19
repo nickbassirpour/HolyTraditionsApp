@@ -20,7 +20,7 @@ namespace WebScraper.Services
             HtmlWeb web = new HtmlWeb { OverrideEncoding = Encoding.UTF8 };
             _url = url;
             _htmlDoc = web.Load(url);
-            _category = _htmlDoc.DocumentNode.SelectSingleNode("//font[@size='6']").InnerText;
+            _category = _htmlDoc.DocumentNode.SelectSingleNode("//font[@size='6' or @size='7']").InnerText;
         }
 
         internal List<BaseArticleModel>? ScrapeArticles()
