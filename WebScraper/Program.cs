@@ -33,18 +33,18 @@ void Scrape(BaseArticleModel baseArticle)
     ArticleModel article = webScraper.ScrapeArticle();
     if (article != null)
     {
-        Console.WriteLine();
-        Console.WriteLine("Url: " + article.Url);
-        Console.WriteLine("Author: " + article.Author?[0]);
-        Console.WriteLine("Title: " + article.Title);
-        Console.WriteLine("ThumbnailURL: " + article.ThumbnailURL);
-        Console.WriteLine("Category: " + article.Category);
-        Console.WriteLine("SubCategory: " + article.SubCategory);
-        Console.WriteLine("Date: " + article.Date?.ToString());
-        Console.WriteLine("Series: " + article.Series);
-        Console.WriteLine("SeriesNumber: " + article.SeriesNumber);
-        Console.WriteLine("Description: " + article.Description);
-        Console.WriteLine("RelatedArticles: " + article.RelatedArticles);
+        //Console.WriteLine();
+        //Console.WriteLine("Url: " + article.Url);
+        //Console.WriteLine("Author: " + article.Author?[0]);
+        //Console.WriteLine("Title: " + article.Title);
+        //Console.WriteLine("ThumbnailURL: " + article.ThumbnailURL);
+        //Console.WriteLine("Category: " + article.Category);
+        //Console.WriteLine("SubCategory: " + article.SubCategory);
+        //Console.WriteLine("Date: " + article.Date?.ToString());
+        //Console.WriteLine("Series: " + article.Series);
+        //Console.WriteLine("SeriesNumber: " + article.SeriesNumber);
+        //Console.WriteLine("Description: " + article.Description);
+        //Console.WriteLine("RelatedArticles: " + article.RelatedArticles);
     
         articles.Add(article); //add proper validfation
     }

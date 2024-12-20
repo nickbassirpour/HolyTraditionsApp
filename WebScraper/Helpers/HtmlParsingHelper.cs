@@ -82,6 +82,11 @@ namespace WebScraper.Helpers
             {
                 string imageSrc = imageNode.GetAttributeValue("src", null);
 
+                if (imageSrc.Contains("burbtn.gif"))
+                {
+                    continue;
+                }
+                Console.WriteLine(imageSrc);
                 //if (imageSrc.Contains("shtml"))
                 //{
                 //    imageSrc = imageSrc.Replace("shtml", "html");
@@ -119,7 +124,7 @@ namespace WebScraper.Helpers
         {
             string domain = useTIADomain ? "https://traditioninaction.org" : "";
 
-            if (!link.Contains("/") && !link.Contains("http"))
+            if (!link.Contains("/"))
             {
                 string category = GetCategoryFromURL(mainUrl);
                 link = domain + "/" + category + "/" + link;

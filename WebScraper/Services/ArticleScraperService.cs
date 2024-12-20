@@ -33,6 +33,10 @@ namespace WebScraper.Services
             }
             string category = HtmlParsingHelper.GetCategoryFromURL(_url);
 
+            // delete me
+            Console.WriteLine();
+            Console.WriteLine(_url);
+
             ArticleModel articleModel = new ArticleModel();
             articleModel.Url = _url;
             articleModel.Category = category;
