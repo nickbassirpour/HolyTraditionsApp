@@ -235,7 +235,15 @@ namespace WebScraper.Services
         {
             if (category == "bev")
             {
-                HtmlNode? dateFromBEV = _htmlDoc.DocumentNode.Descendants().FirstOrDefault(node => node.Id == "topicHeader" || node.Element("h3") != null);
+                HtmlNode? dateFromBEV = null;
+                if (_htmlDoc.DocumentNode.Descendants().FirstOrDefault(node => node.Id == "topicHeader" || node.Element("h3") != null) != null)
+                {
+                    dateFromBEV = _htmlDoc.DocumentNode.Descendants().FirstOrDefault(node => node.Id == "topicHeader" || node.Element("h3") != null);
+                }
+                else if (_htmlDoc.DocumentNode.SelectSingleNode("//*[@size='2' and @color='#800000']") != null)
+                {
+                    dateFromBEV = _htmlDoc.DocumentNode.SelectSingleNode("//*[@size='2' and @color='#800000']");
+                }
                 if (!string.IsNullOrWhiteSpace(dateFromBEV?.InnerText))
                 {
                     string cleanedDateFromBEV = dateFromBEV.InnerText.Replace("NEWS:", "").Replace("News:", "").Replace("news:", "");
@@ -251,25 +259,22 @@ namespace WebScraper.Services
                 return HtmlParsingHelper.ConvertStringToDate(cleanedDateFromId);
             }
 
-            HtmlNode? dateFromSize1AndColorNavy = _htmlDoc.DocumentNode.SelectSingleNode("//*[@size='1' and @color='navy'" +
-            "and contains(text(), 'Posted')]");
-            if (!string.IsNullOrWhiteSpace(dateFromSize1AndColorNavy?.InnerText))
+            HtmlNode? dateElementFromSize1AndColorNavy = _htmlDoc.DocumentNode.SelectSingleNode("//*[@size='1' and @color='navy']");
+            if (!string.IsNullOrWhiteSpace(dateElementFromSize1AndColorNavy?.InnerText) && dateElementFromSize1AndColorNavy.InnerText.Contains("Posted"))
             {
-                string cleanedDateFromSizeAndColor = dateFromSize1AndColorNavy.InnerText;
+                string cleanedDateFromSizeAndColor = dateElementFromSize1AndColorNavy.InnerText;
                 return HtmlParsingHelper.ConvertStringToDate(cleanedDateFromSizeAndColor);
             }
 
-            HtmlNode? dateFromSize1AndColorNAVY = _htmlDoc.DocumentNode.SelectSingleNode("//*[@size='1' and @color='NAVY'" +
-                "and contains(text(), 'Posted')]");
-            if (!string.IsNullOrWhiteSpace(dateFromSize1AndColorNAVY?.InnerText))
+            HtmlNode? dateFromSize1AndColorNAVY = _htmlDoc.DocumentNode.SelectSingleNode("//*[@size='1' and @color='NAVY']");
+            if (!string.IsNullOrWhiteSpace(dateFromSize1AndColorNAVY?.InnerText) && dateFromSize1AndColorNAVY.InnerText.Contains("Posted"))
             {
                 string cleanedDateFromSizeAndColor = dateFromSize1AndColorNAVY.InnerText;
                 return HtmlParsingHelper.ConvertStringToDate(cleanedDateFromSizeAndColor);
             };
 
-            HtmlNode? dateFromSize1AndColor000080 = _htmlDoc.DocumentNode.SelectSingleNode("//*[@size='1' and @color='#000080'" +
-                "and contains(text(), 'Posted')]");
-            if (!string.IsNullOrWhiteSpace(dateFromSize1AndColor000080?.InnerText))
+            HtmlNode? dateFromSize1AndColor000080 = _htmlDoc.DocumentNode.SelectSingleNode("//*[@size='1' and @color='#000080']");
+            if (!string.IsNullOrWhiteSpace(dateFromSize1AndColor000080?.InnerText) && dateFromSize1AndColor000080.InnerText.Contains("Posted"))
             {
                 string cleanedDateFromSizeAndColor = dateFromSize1AndColor000080.InnerText;
                 return HtmlParsingHelper.ConvertStringToDate(cleanedDateFromSizeAndColor);
@@ -278,8 +283,8 @@ namespace WebScraper.Services
             HtmlNode? dateFromPostedOnly = _htmlDoc.DocumentNode.SelectSingleNode("//*[contains(text(), 'Posted')]");
             if (!string.IsNullOrWhiteSpace(dateFromPostedOnly?.InnerText))
             {
-                string cleanedDateFromSizeAndColor = dateFromSize1AndColorNAVY.InnerText;
-                return HtmlParsingHelper.ConvertStringToDate(cleanedDateFromSizeAndColor);
+                string cleanedDateFromPostedText = dateFromPostedOnly.InnerText;
+                return HtmlParsingHelper.ConvertStringToDate(cleanedDateFromPostedText);
             };
 
             return null; 
@@ -294,7 +299,7 @@ namespace WebScraper.Services
                 return null;
             }
             string src = firstImageUrl.GetAttributeValue("src", string.Empty);
-            string srcWithDomain = HtmlParsingHelper.AddDomainToLink(src, _url, true);
+            string srcWithDomain = HtmlParsingHelper.CleanLink(src, _url, true);
             return srcWithDomain;
         }
     }

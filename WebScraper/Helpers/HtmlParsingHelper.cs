@@ -30,15 +30,11 @@ namespace WebScraper.Helpers
             List<string> splitHtmlBody = htmlBodyNode.Split("alt=\"contact\">").ToList();
             if (splitHtmlBody.Count > 1)
             {
-                //src="images/A_contact.gif"
                 List<string> cleanedHtmlBodyList = Regex.Split(splitHtmlBody[1], @"<!-- AddToAny BEGIN -->", RegexOptions.Singleline).ToList();
                 if (cleanedHtmlBodyList.Count > 1)
                 {
                     return cleanedHtmlBodyList[0];
                 }
-
-                //string cleanedHtmlBody = Regex.Split(splitHtmlBody[1], @"<!-- AddToAny BEGIN -->", RegexOptions.Singleline)[0];
-                //return cleanedHtmlBody;
             }
 
             List<string> splitHtmlBodyOnSrc = htmlBodyNode.Split("src=\"images/A_contact.gif").ToList();
@@ -81,59 +77,24 @@ namespace WebScraper.Helpers
             foreach (HtmlNode imageNode in imageNodes)
             {
                 string imageSrc = imageNode.GetAttributeValue("src", null);
-
-                if (imageSrc.Contains("burbtn.gif"))
-                {
-                    continue;
-                }
-                Console.WriteLine(imageSrc);
-                //if (imageSrc.Contains("shtml"))
-                //{
-                //    imageSrc = imageSrc.Replace("shtml", "html");
-                //} 
-                //else if (imageSrc.Contains("shtm"))
-                //{
-                //    imageSrc = imageSrc.Replace("shtm", "htm");
-                //}
-
                 CleanLink(imageSrc, url, true);
             }
         }
 
         internal static string CleanLink(string link, string mainUrl, bool useTIADomain)
         {
-            string linkWithCleanedSlashes = CleanSlashesFromLink(link);
-            string linkWithCleanedSlashesAndDomain = AddDomainToLink(linkWithCleanedSlashes, mainUrl, useTIADomain);
-            return linkWithCleanedSlashesAndDomain;
-        }
-
-        private static string CleanSlashesFromLink(string link)
-        {
-            if (link.Contains("../"))
-            {
-                link = link.Replace("../", "/");
-            }
-            else if (link.Contains("./"))
-            {
-                link = link.Replace("./", "/");
-            }
-            return link;
-        }
-
-        internal static string AddDomainToLink(string link, string mainUrl, bool useTIADomain)
-        {
             string domain = useTIADomain ? "https://traditioninaction.org" : "";
 
-            if (!link.Contains("/"))
+            if (link.Contains("../"))
+            {
+                link = domain + "/" + link.Replace("../", "");
+            }
+            else 
             {
                 string category = GetCategoryFromURL(mainUrl);
                 link = domain + "/" + category + "/" + link;
             }
-            else if (!link.Contains("http"))
-            {
-                link = domain + "/" + link;
-            }
-            return link;    
+            return link;
         }
 
         internal static string GetCategoryFromURL(string url)
@@ -144,7 +105,15 @@ namespace WebScraper.Helpers
 
         internal static string? ConvertStringToDate(string date)
         {
-            string dateWithoutPosted = date.Split("Posted")[1].Trim().Replace("--", "01");
+            string dateWithoutPosted = string.Empty;
+            if (date.Contains("Posted on"))
+            {
+                dateWithoutPosted = date.Split("Posted on")[1].Trim().Replace("--", "01");
+            }
+            else
+            {
+                dateWithoutPosted = date.Split("Posted")[1].Trim().Replace("--", "01");
+            }
             if (DateTime.TryParse(dateWithoutPosted, out DateTime parsedDate))
             {
                 string formattedDate = parsedDate.ToString("yyyy-MM-dd");
