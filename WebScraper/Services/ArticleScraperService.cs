@@ -235,21 +235,7 @@ namespace WebScraper.Services
         {
             if (category == "bev")
             {
-                HtmlNode? dateFromBEV = null;
-                if (_htmlDoc.DocumentNode.Descendants().FirstOrDefault(node => node.Id == "topicHeader" || node.Element("h3") != null) != null)
-                {
-                    dateFromBEV = _htmlDoc.DocumentNode.Descendants().FirstOrDefault(node => node.Id == "topicHeader" || node.Element("h3") != null);
-                }
-                else if (_htmlDoc.DocumentNode.SelectSingleNode("//*[@size='2' and @color='#800000']") != null)
-                {
-                    dateFromBEV = _htmlDoc.DocumentNode.SelectSingleNode("//*[@size='2' and @color='#800000']");
-                }
-                if (!string.IsNullOrWhiteSpace(dateFromBEV?.InnerText))
-                {
-                    string cleanedDateFromBEV = dateFromBEV.InnerText.Replace("NEWS:", "").Replace("News:", "").Replace("news:", "");
-                    return HtmlParsingHelper.ConvertStringToDate(cleanedDateFromBEV.Trim());
-                }
-                return null;
+                return GetBevDate();
             }
 
             HtmlNode? dateFromId = _htmlDoc.DocumentNode.SelectSingleNode("//*[@id=\'posted\' or @id=\'sitation\']");
@@ -288,6 +274,26 @@ namespace WebScraper.Services
             };
 
             return null; 
+        }
+
+        private string? GetBevDate()
+        {
+            HtmlNode? dateFromBEV = null;
+            if (_htmlDoc.DocumentNode.Descendants().FirstOrDefault(node => node.Id == "topicHeader" || node.Element("h3") != null) != null)
+            {
+                dateFromBEV = _htmlDoc.DocumentNode.Descendants().FirstOrDefault(node => node.Id == "topicHeader" || node.Element("h3") != null);
+            }
+            else if (_htmlDoc.DocumentNode.SelectSingleNode("//*[@size='2' and @color='#800000']") != null)
+            {
+                // add logic to find first or default date at top (descendants, attrib same, text contains posted). 
+                dateFromBEV = _htmlDoc.DocumentNode.SelectSingleNode("//*[@size='2' and @color='#800000']");
+            }
+            if (!string.IsNullOrWhiteSpace(dateFromBEV?.InnerText))
+            {
+                string cleanedDateFromBEV = dateFromBEV.InnerText.Replace("NEWS:", "").Replace("News:", "").Replace("news:", "");
+                return HtmlParsingHelper.ConvertStringToDate(cleanedDateFromBEV.Trim());
+            }
+            return null;
         }
 
         public string? GetThumbnailUrl(string splitHtmlBody)
