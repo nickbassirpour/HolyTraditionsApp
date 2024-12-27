@@ -113,15 +113,15 @@ void ScrapeUrl(string url)
 //ScrapeList("https://www.traditioninaction.org/religious/h000rpStoriesLegendsMainPage.html#stories");
 //ScrapeList("https://www.traditioninaction.org/religious/m000rpUnderstandCrisisMainPage.htm");
 
-//ScrapeList("https://www.traditioninaction.org/religious/e000rpUnderAttackMainPage.html#attack");
-//ScrapeList("https://www.traditioninaction.org/religious/g000rpFlashesonTheologyMainPage.html#history");
-//ScrapeList("https://www.traditioninaction.org/HotTopics/k00CanonizationsIndex.html#factory");
-//ScrapeList("https://www.traditioninaction.org/religious/b000rpPrayersMainPage.html#prayers");
-//ScrapeList("https://www.traditioninaction.org/religious/p000rpHymns.htm#hymns");
-//ScrapeList("https://www.traditioninaction.org/religious/Q000_Reels.htm");
-//ScrapeList("https://www.traditioninaction.org/Margil/mainpage.html");
+ScrapeList("https://www.traditioninaction.org/religious/e000rpUnderAttackMainPage.html#attack");
+ScrapeList("https://www.traditioninaction.org/religious/g000rpFlashesonTheologyMainPage.html#history");
+ScrapeList("https://www.traditioninaction.org/HotTopics/k00CanonizationsIndex.html#factory");
+ScrapeList("https://www.traditioninaction.org/religious/b000rpPrayersMainPage.html#prayers");
+ScrapeList("https://www.traditioninaction.org/religious/p000rpHymns.htm#hymns");
+ScrapeList("https://www.traditioninaction.org/religious/Q000_Reels.htm");
+ScrapeList("https://www.traditioninaction.org/Margil/mainpage.html");
 
-ScrapeUrl("https://traditioninaction.org/bev/110bev06-29-2009.htm");
+//ScrapeUrl("https://traditioninaction.org/bev/110bev06-29-2009.htm");
 
 // need to move to separate class now
 

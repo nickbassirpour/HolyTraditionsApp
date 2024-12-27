@@ -12,6 +12,7 @@ using System.Xml;
 using System.Xml.Linq;
 using WebScraper.Enums;
 using TIAArticleAppAPI.Models;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace WebScraper.Helpers
 {
@@ -105,15 +106,7 @@ namespace WebScraper.Helpers
 
         internal static string? ConvertStringToDate(string date)
         {
-            string dateWithoutPosted = string.Empty;
-            if (date.Contains("Posted on"))
-            {
-                dateWithoutPosted = date.Split("Posted on")[1].Trim().Replace("--", "01");
-            }
-            else
-            {
-                dateWithoutPosted = date.Split("Posted")[1].Trim().Replace("--", "01");
-            }
+            string dateWithoutPosted = cleanDateValue(date);
             if (DateTime.TryParse(dateWithoutPosted, out DateTime parsedDate))
             {
                 string formattedDate = parsedDate.ToString("yyyy-MM-dd");
@@ -123,6 +116,39 @@ namespace WebScraper.Helpers
             {
                 return null;
             }
+        }
+
+        private static string cleanDateValue(string date)
+        {
+            string dateWithoutPosted = RemovePosted(date);
+
+            dateWithoutPosted = dateWithoutPosted.Replace("&nbsp;", "").Replace("--", "01");
+
+            string cleanedDate = RemoveOrdinalSuffixes(dateWithoutPosted.Trim());
+
+            return cleanedDate;
+        }
+
+        private static string RemovePosted(string date)
+        {
+            if (date.Contains("Posted on"))
+            {
+                date = date.Split("Posted on")[1].Trim().Replace("--", "01");
+            }
+            else if (date.Contains("Posted"))
+            {
+                date = date.Split("Posted")[1].Trim().Replace("--", "01");
+            }
+            else
+            {
+                date = date.Trim().Replace("--", "01");
+            }
+            return date;
+        }
+
+        private static string RemoveOrdinalSuffixes(string dateWithoutPosted)
+        {
+            return System.Text.RegularExpressions.Regex.Replace(dateWithoutPosted, @"\b(\d+)(st|nd|rd|th)\b", "$1");
         }
     }
 }
