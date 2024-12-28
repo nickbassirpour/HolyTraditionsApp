@@ -37,6 +37,7 @@ namespace WebScraper.Services
                 {
                     articleLinks.Add(articleModel);
                 }
+
             }
 
             foreach (HtmlNode linkElement in linkElements.Reverse())
@@ -47,6 +48,7 @@ namespace WebScraper.Services
                 {
                     articleLinks.Add(articleModel);
                 }
+
             }
 
             return articleLinks;

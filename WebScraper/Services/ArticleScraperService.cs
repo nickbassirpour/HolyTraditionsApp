@@ -35,7 +35,7 @@ namespace WebScraper.Services
 
             // delete me
             Console.WriteLine();
-            Console.WriteLine(_url);
+            //Console.WriteLine(_url);
 
             ArticleModel articleModel = new ArticleModel();
             articleModel.Url = _url;
@@ -283,10 +283,10 @@ namespace WebScraper.Services
             {
                 dateFromBEV = _htmlDoc.DocumentNode.Descendants().FirstOrDefault(node => node.Id == "topicHeader" || node.Element("h3") != null);
             }
-            else if (_htmlDoc.DocumentNode.SelectSingleNode("//*[@size='2' and @color='#800000']") != null)
+            else if (_htmlDoc.DocumentNode.SelectSingleNode("//*[@size='2' and @color='#800000' or @size='2' and @color='maroon']") != null)
             {
                 // add logic to find first or default date at top (descendants, attrib same, text contains posted). 
-                dateFromBEV = _htmlDoc.DocumentNode.SelectSingleNode("//*[@size='2' and @color='#800000']");
+                dateFromBEV = _htmlDoc.DocumentNode.SelectSingleNode("//*[@size='2' and @color='#800000' or @size='2' and @color='maroon']");
             }
             if (!string.IsNullOrWhiteSpace(dateFromBEV?.InnerText))
             {
