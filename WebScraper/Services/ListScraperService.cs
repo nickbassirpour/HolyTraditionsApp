@@ -40,16 +40,16 @@ namespace WebScraper.Services
 
             }
 
-            foreach (HtmlNode linkElement in linkElements.Reverse())
-            {
-                if (linkElement.IsNullOrBadLink()) continue;
-                BaseArticleModel articleModel = GetBaseArticle(linkElement);
-                if (articleLinks.Count < 20)
-                {
-                    articleLinks.Add(articleModel);
-                }
+            //foreach (HtmlNode linkElement in linkElements.Reverse())
+            //{
+            //    if (linkElement.IsNullOrBadLink()) continue;
+            //    BaseArticleModel articleModel = GetBaseArticle(linkElement);
+            //    if (articleLinks.Count < 20)
+            //    {
+            //        articleLinks.Add(articleModel);
+            //    }
 
-            }
+            //}
 
             return articleLinks;
         }
@@ -83,7 +83,8 @@ namespace WebScraper.Services
             else
             {
                 HtmlNode anchorNode = linkElement.SelectSingleNode(".//a");
-                HtmlNode descriptionNode = linkElement.SelectSingleNode(".//span");
+                HtmlNode descriptionNode = linkElement.SelectSingleNode(".//span") ?? linkElement.SelectSingleNode(".//*[@size='3' and @color='MAROON']");
+                
                 return new BaseArticleModel
                 {
                     Url = HtmlParsingHelper.CleanLink(anchorNode.GetAttributeValue("href", ""), _url, true),
