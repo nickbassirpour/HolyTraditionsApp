@@ -20,7 +20,6 @@ void ScrapeList(string url)
             {
                 continue;
             }
-            // run and check for errors I'm the worst
             Scrape(article);
         }
     }
@@ -29,7 +28,7 @@ void ScrapeList(string url)
 void Scrape(BaseArticleModel baseArticle)
 {
     List<ArticleModel> articles = new List<ArticleModel>();
-    ArticleScraperService webScraper = new ArticleScraperService(baseArticle.Url);
+    ArticleScraperService webScraper = new ArticleScraperService(baseArticle);
     ArticleModel article = webScraper.ScrapeArticle();
     if (article != null)
     {
@@ -50,30 +49,6 @@ void Scrape(BaseArticleModel baseArticle)
     }
 }
 
-void ScrapeUrl(string url)
-{
-    List<ArticleModel> articles = new List<ArticleModel>();
-    ArticleScraperService webScraper = new ArticleScraperService(url);
-    ArticleModel article = webScraper.ScrapeArticle();
-    if (article != null)
-    {
-        Console.WriteLine();
-        Console.WriteLine("Url: " + article.Url);
-        Console.WriteLine("Author: " + article.Author?[0]);
-        Console.WriteLine("Title: " + article.Title);
-        Console.WriteLine("ThumbnailURL: " + article.ThumbnailURL);
-        Console.WriteLine("Category: " + article.Category);
-        Console.WriteLine("SubCategory: " + article.SubCategory);
-        Console.WriteLine("Date: " + article.Date?.ToString());
-        Console.WriteLine("Series: " + article.Series);
-        Console.WriteLine("SeriesNumber: " + article.SeriesNumber);
-        Console.WriteLine("Description: " + article.Description);
-        Console.WriteLine("RelatedArticles: " + article.RelatedArticles);
-
-        articles.Add(article); //add proper validfation
-    }
-}
-
 var jsonLinks = System.IO.File.ReadAllText(@"C:\Users\nickb\Desktop\Code_Projects\TIABackend\WebScraper\Data\links.json");
 var links = JsonSerializer.Deserialize<Dictionary<string, List<string>>>(jsonLinks);
 
@@ -83,7 +58,7 @@ if (links != null)
     foreach (var category in links)
     {
         string categoryName = category.Key;
-        if (categoryName == "bev")
+        if (categoryName != "bev")
         {
             continue;
         }

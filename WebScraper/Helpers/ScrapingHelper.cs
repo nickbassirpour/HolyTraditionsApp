@@ -72,6 +72,11 @@ namespace WebScraper.Helpers
             "olgs",
             "sod",
         };
+
+        internal static string[] skipFirstThumbnailImage = new string[]
+        {
+            "bevimages/00_Peregrine.jpg"
+        };
     }
 }
  

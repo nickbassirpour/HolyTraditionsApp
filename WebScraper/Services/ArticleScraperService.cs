@@ -15,12 +15,14 @@ namespace WebScraper.Services
     internal class ArticleScraperService
     {
         private HtmlDocument _htmlDoc;
+        private BaseArticleModel _baseArticle;
         private string _url;
-        public ArticleScraperService(string url)
+        public ArticleScraperService(BaseArticleModel baseArticle)
         {
-            _url = url;
+            _baseArticle = baseArticle;
+            _url = baseArticle.Url;
             HtmlWeb web = new HtmlWeb { OverrideEncoding = Encoding.UTF8 };
-            _htmlDoc = web.Load(url);
+            _htmlDoc = web.Load(_url);
         }
 
         public ArticleModel ScrapeArticle()
@@ -134,6 +136,11 @@ namespace WebScraper.Services
 
         public string? GetTitle(string category)
         {
+            if (category == "bev")
+            {
+                return _baseArticle.Title;
+            }
+
             if (category == "RevolutionPhotos")
             {
                 HtmlNode? titleForRevolutionPhotos = _htmlDoc.DocumentNode.SelectSingleNode("//*[@size=4 and @color='#800000']");
@@ -299,12 +306,15 @@ namespace WebScraper.Services
         public string? GetThumbnailUrl(string splitHtmlBody)
         {
             HtmlDocument splitBodyNode = HtmlParsingHelper.LoadHtmlDocument(splitHtmlBody);
-            HtmlNode? firstImageUrl = splitBodyNode.DocumentNode.SelectSingleNode("//img[1]");
-            if (firstImageUrl == null)
+            HtmlNode? firstImageNode = splitBodyNode.DocumentNode.SelectSingleNode("(//img)[1]");
+            if (firstImageNode == null) return null;
+            
+            if (firstImageNode.GetAttributeValue("src", string.Empty).MatchesAnyOf(ScrapingHelper.skipFirstThumbnailImage))
             {
-                return null;
+                firstImageNode = splitBodyNode.DocumentNode.SelectSingleNode("(//img)[2]");
             }
-            string src = firstImageUrl.GetAttributeValue("src", string.Empty);
+
+            string src = firstImageNode.GetAttributeValue("src", string.Empty);
             string srcWithDomain = HtmlParsingHelper.CleanLink(src, _url, true);
             return srcWithDomain;
         }
