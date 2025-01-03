@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using WebScraper.Helpers;
 using TIAArticleAppAPI.Models;
 using WebScraper.Validation;
+using System.Data.Common;
 
 namespace WebScraper.Services
 {
@@ -31,27 +32,20 @@ namespace WebScraper.Services
             List<BaseArticleModel> articleLinks = new List<BaseArticleModel>();
             foreach (HtmlNode linkElement in linkElements)
             {
-                if (linkElement.IsNullOrBadLink()) continue;
-                BaseArticleModel articleModel = GetBaseArticle(linkElement);
-                if (articleLinks.Count < 10)
+                if (linkElement.IsSeries())
                 {
-                    articleLinks.Add(articleModel);
-                }
-
-            }
-
-            foreach (HtmlNode linkElement in linkElements.Reverse())
-            {
-                if (linkElement.IsNullOrBadLink()) continue;
-                BaseArticleModel articleModel = GetBaseArticle(linkElement);
-                if (articleLinks.Count < 20)
+                    List<BaseArticleModel> articleModels = GetBaseArticleListFromSeries(linkElement);
+                    articleLinks.AddRange(articleModels);
+                } else
                 {
+                    if (linkElement.IsNullOrBadLink()) continue;
+                    BaseArticleModel articleModel = GetBaseArticle(linkElement);
                     articleLinks.Add(articleModel);
                 }
             }
-
             return articleLinks;
         }
+
 
         private IEnumerable<HtmlNode> GetLinkElements()
         {
@@ -84,6 +78,7 @@ namespace WebScraper.Services
                 HtmlNode anchorNode = linkElement.SelectSingleNode(".//a");
                 HtmlNode descriptionNode = linkElement.SelectSingleNode(".//span") 
                     ?? linkElement.SelectSingleNode(".//*[@size='3' and @color='MAROON']")
+                    ?? linkElement.SelectSingleNode(".//*[@size='3']")
                     ?? linkElement.SelectSingleNode(".//*[@color='#FF0000']").SelectSingleNode("text()[normalize-space()]");
 
                 return new BaseArticleModel
@@ -93,6 +88,32 @@ namespace WebScraper.Services
                     Description = descriptionNode?.InnerText.Trim(),
                 };
             }
+        }
+
+
+        private List<BaseArticleModel> GetBaseArticleListFromSeries(HtmlNode linkElement)
+        {
+            var bElementDoc = new HtmlDocument();
+            bElementDoc.LoadHtml(linkElement.InnerHtml);
+            IEnumerable<HtmlNode> bElements = bElementDoc.DocumentNode.SelectNodes("//b");
+            List<BaseArticleModel> baseArticleModelList = new List<BaseArticleModel>();
+            if (bElements != null)
+            {
+                BaseArticleModel baseArticleModel = new BaseArticleModel();
+                foreach (HtmlNode bElement in bElements)
+                {
+                    HtmlNode anchorNode = linkElement.SelectSingleNode(".//a");
+                    if (anchorNode != null)
+                    {
+                        baseArticleModel.Url = HtmlParsingHelper.CleanLink(anchorNode.GetAttributeValue("href", ""), _url, true);
+                        baseArticleModel.Title = anchorNode.InnerText.Trim();
+                        baseArticleModel.Description = bElement.SelectSingleNode("following-sibling::*[@color='#800000']")?.InnerText.Trim();
+                        //baseArticleModel.Description = bElement.SelectSingleNode("following-sibling::text()")?.InnerText.Trim();
+                    }
+                }
+                baseArticleModelList.Add(baseArticleModel);
+            }
+            return baseArticleModelList;
         }
     }
 }

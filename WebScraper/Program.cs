@@ -49,7 +49,7 @@ void Scrape(BaseArticleModel baseArticle)
     }
 }
 
-var jsonLinks = System.IO.File.ReadAllText(@"C:\Users\nickb\Desktop\Code_Projects\TIABackend\WebScraper\Data\links.json");
+var jsonLinks = System.IO.File.ReadAllText(@"C:\Users\nickb\Desktop\Code_Projects\TIABackend\WebScraper\Data\testLinks.json");
 var links = JsonSerializer.Deserialize<Dictionary<string, List<string>>>(jsonLinks);
 
 if (links != null)
@@ -58,11 +58,13 @@ if (links != null)
     foreach (var category in links)
     {
         string categoryName = category.Key;
-        if (categoryName != "bev")
-        {
-            continue;
-        }
+        //if (categoryName != "religiousTopics")
+        //{
+        //    continue;
+        //}
         List<string> urls = category.Value;
+
+        //ScrapeList(urls[0]);
 
         foreach (string url in urls)
         {

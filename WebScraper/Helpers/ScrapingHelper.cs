@@ -21,12 +21,27 @@ namespace WebScraper.Helpers
             return targets.Any(target => target.Contains(value, StringComparison.OrdinalIgnoreCase));
         }
 
+        internal static bool IsSeries(this HtmlNode linkElement)
+        {
+            HtmlNodeCollection aTags = linkElement.SelectNodes(".//a");
+            if (aTags == null || aTags.Count == 0) return false;
+            if (anyBadLinks(aTags)) return false;
+            if (aTags.Count > 1 && linkElement.InnerText.Contains("Part 1")) return true;
+            return false;
+        }
+
         internal static bool IsNullOrBadLink(this HtmlNode linkElement)
         {
             if (String.IsNullOrWhiteSpace(linkElement.InnerText)) return true;
             if (linkElement.InnerText.MatchesAnyOf(ScrapingHelper.linkTextsNotToScrape.ToArray())) return true;
             HtmlNodeCollection aTags = linkElement.SelectNodes(".//a");
             if (aTags == null || aTags.Count == 0 || aTags.Count > 1) return true;
+            if (anyBadLinks(aTags)) return true;
+            return false;
+        }
+
+        internal static bool anyBadLinks(this HtmlNodeCollection aTags)
+        {
             if (aTags.Any(a => String.IsNullOrWhiteSpace(a.InnerText))) return true;
             if (aTags.Any(a => a.GetAttributeValue("href", null).MatchesAnyOf(ScrapingHelper.linksNotToScrape.ToArray()))) return true;
             if (!aTags.Any(a => a.GetAttributeValue("href", null).Contains("."))) return true;
