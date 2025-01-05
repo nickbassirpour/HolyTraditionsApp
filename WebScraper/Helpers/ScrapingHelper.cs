@@ -23,9 +23,9 @@ namespace WebScraper.Helpers
 
         internal static bool IsSeries(this HtmlNode linkElement)
         {
+            if (linkElement.isMainTDElement()) return false;
             HtmlNodeCollection aTags = linkElement.SelectNodes(".//a");
             if (aTags == null || aTags.Count == 0) return false;
-            if (anyBadLinks(aTags)) return false;
             if (aTags.Count > 1 && linkElement.InnerText.Contains("Part 1")) return true;
             return false;
         }
@@ -45,6 +45,19 @@ namespace WebScraper.Helpers
             if (aTags.Any(a => String.IsNullOrWhiteSpace(a.InnerText))) return true;
             if (aTags.Any(a => a.GetAttributeValue("href", null).MatchesAnyOf(ScrapingHelper.linksNotToScrape.ToArray()))) return true;
             if (!aTags.Any(a => a.GetAttributeValue("href", null).Contains("."))) return true;
+            return false;
+        }
+        internal static bool isBadLink(this string url)
+        {
+            if (String.IsNullOrWhiteSpace(url)) return true;
+            if (url.MatchesAnyOf(ScrapingHelper.linksNotToScrape.ToArray())) return true;
+            if (!url.Contains(".")) return true;
+            return false;
+        }
+
+        internal static bool isMainTDElement(this HtmlNode tdElement)
+        {
+            if (tdElement.InnerText.Contains("All Rights Reserved")) return true;
             return false;
         }
 

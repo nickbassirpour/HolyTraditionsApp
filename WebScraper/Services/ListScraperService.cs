@@ -93,25 +93,34 @@ namespace WebScraper.Services
 
         private List<BaseArticleModel> GetBaseArticleListFromSeries(HtmlNode linkElement)
         {
-            var bElementDoc = new HtmlDocument();
-            bElementDoc.LoadHtml(linkElement.InnerHtml);
-            IEnumerable<HtmlNode> bElements = bElementDoc.DocumentNode.SelectNodes("//b");
+            var allBElementsDoc = new HtmlDocument();
+            allBElementsDoc.LoadHtml(linkElement.InnerHtml);
+            IEnumerable<HtmlNode> bElements = allBElementsDoc.DocumentNode.SelectNodes("//b");
             List<BaseArticleModel> baseArticleModelList = new List<BaseArticleModel>();
             if (bElements != null)
             {
-                BaseArticleModel baseArticleModel = new BaseArticleModel();
                 foreach (HtmlNode bElement in bElements)
                 {
-                    HtmlNode anchorNode = linkElement.SelectSingleNode(".//a");
-                    if (anchorNode != null)
+                    var bElementDoc = new HtmlDocument();
+                    bElementDoc.LoadHtml(bElement.InnerHtml);
+                    IEnumerable<HtmlNode> anchorNodes = bElementDoc.DocumentNode.SelectNodes(".//a");
+                    if (anchorNodes != null)
                     {
-                        baseArticleModel.Url = HtmlParsingHelper.CleanLink(anchorNode.GetAttributeValue("href", ""), _url, true);
-                        baseArticleModel.Title = anchorNode.InnerText.Trim();
-                        baseArticleModel.Description = bElement.SelectSingleNode("following-sibling::*[@color='#800000']")?.InnerText.Trim();
-                        //baseArticleModel.Description = bElement.SelectSingleNode("following-sibling::text()")?.InnerText.Trim();
+                        foreach (HtmlNode anchorNode in anchorNodes)
+                        {
+                            if (String.IsNullOrWhiteSpace(anchorNode.GetAttributeValue("href", ""))) continue;
+                            if (anchorNode.GetAttributeValue("href", "").isBadLink()) continue;
+                            if (String.IsNullOrWhiteSpace(anchorNode.InnerText)) continue;
+                            BaseArticleModel baseArticleModel = new BaseArticleModel 
+                            { 
+                                Url = HtmlParsingHelper.CleanLink(anchorNode.GetAttributeValue("href", ""), _url, true),
+                                Title = anchorNode.InnerText.Trim(),
+                                Description = bElement.SelectSingleNode("following-sibling::*[@color='#800000']")?.InnerText.Trim()
+                            };
+                            baseArticleModelList.Add(baseArticleModel);
+                        }
                     }
                 }
-                baseArticleModelList.Add(baseArticleModel);
             }
             return baseArticleModelList;
         }

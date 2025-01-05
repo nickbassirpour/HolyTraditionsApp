@@ -121,13 +121,17 @@ namespace WebScraper.Services
 
             if (series.InnerText.Contains("-"))
             {
-                seriesParts = series.InnerText.Trim().Split(" - ").ToList();
+                seriesParts = series.InnerText.Split("-").ToList();
+                seriesParts[0].Replace("&nbsp;", "").Trim();
+                seriesParts[1].Replace("&nbsp;", "").Trim();
                 return seriesParts;
             }
 
             if (series.InnerText.Contains("–"))
             {
-                seriesParts = series.InnerText.Trim().Split(" – ").ToList();
+                seriesParts = series.InnerText.Split("–").ToList();
+                seriesParts[0].Replace("&nbsp;", "").Trim();
+                seriesParts[1].Replace("&nbsp;", "").Trim();
                 return seriesParts;
             }
 
