@@ -25,8 +25,12 @@ namespace WebScraper.Helpers
             IEnumerable<HtmlNode> linkElements = htmlDocument.DocumentNode.SelectNodes("//a");
             return linkElements;
         }
-        internal static string? SplitHtmlBody(HtmlDocument htmlDoc)
+        internal static string? SplitHtmlBody(HtmlDocument htmlDoc, string url)
         {
+            if (htmlDoc.DocumentNode.InnerHtml == null)
+            {
+                return null;
+            }
             string htmlBodyNode = htmlDoc.DocumentNode.InnerHtml;
             List<string> splitHtmlBody = htmlBodyNode.Split("alt=\"contact\">").ToList();
             if (splitHtmlBody.Count > 1)

@@ -16,7 +16,7 @@ void ScrapeList(string url)
     {
         foreach (BaseArticleModel article in articles)
         {
-            if (article.Url.EndsWith(".pdf") || article.Url.Contains("tiabk"))
+            if (article.Url.EndsWith(".pdf") || article.Url.Contains("tiabk") || article.Url.EndsWith("pps") || article.Url.EndsWith("mp4"))
             {
                 continue;
             }
