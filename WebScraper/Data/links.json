@@ -56,5 +56,13 @@
     "https://www.traditioninaction.org/Cultural/E000-1_Ecology.htm#ecology",
     "https://www.traditioninaction.org/Cultural/F000rpChurch-StateRelationsIndex.htm#state",
     "https://www.traditioninaction.org/Cultural/Music_P_files/000_Song-Index.htm"
+  ],
+  "historyPage": [
+    "https://traditioninaction.org/History/A_000_WorldHistory.htm#world",
+    "https://traditioninaction.org/History/B_000_AmericanHistory.htm#american",
+    "https://traditioninaction.org/History/C_000_Personalities.htm#personalities",
+    "https://traditioninaction.org/History/H000_Reels.htm",
+    "https://traditioninaction.org/History/F_000_PhilosophyHistory.htm#philosophy",
+    "https://traditioninaction.org/History/G_000_SecretForces.htm#secret"
   ]
 }
