@@ -112,11 +112,13 @@ namespace WebScraper.Services
                             if (String.IsNullOrWhiteSpace(anchorNode.GetAttributeValue("href", ""))) continue;
                             if (anchorNode.GetAttributeValue("href", "").isBadLink()) continue;
                             if (String.IsNullOrWhiteSpace(anchorNode.InnerText)) continue;
+                            string? descriptionBeforeCleanUp = bElement.SelectSingleNode("following-sibling::*[@color='#800000']")?.InnerText;
+
                             BaseArticleModel baseArticleModel = new BaseArticleModel 
                             { 
                                 Url = HtmlParsingHelper.CleanLink(anchorNode.GetAttributeValue("href", ""), _url, true),
-                                Title = anchorNode.InnerText.Trim(),
-                                Description = bElement.SelectSingleNode("following-sibling::*[@color='#800000']")?.InnerText.Trim()
+                                Title = HtmlEntity.DeEntitize(anchorNode.InnerText).Trim(),
+                                Description = !String.IsNullOrWhiteSpace(descriptionBeforeCleanUp) ?  HtmlEntity.DeEntitize(descriptionBeforeCleanUp).Trim() : null,
                             };
                             baseArticleModelList.Add(baseArticleModel);
                         }
