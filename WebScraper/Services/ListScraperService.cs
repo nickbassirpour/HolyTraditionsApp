@@ -32,6 +32,7 @@ namespace WebScraper.Services
             List<BaseArticleModel> articleLinks = new List<BaseArticleModel>();
             foreach (HtmlNode linkElement in linkElements)
             {
+                if (linkElement.containsTDNestedInTD()) continue;
                 if (linkElement.IsSeries())
                 {
                     List<BaseArticleModel> articleModels = GetBaseArticleListFromSeries(linkElement);

@@ -61,6 +61,12 @@ namespace WebScraper.Helpers
             return false;
         }
 
+        internal static bool containsTDNestedInTD(this HtmlNode tdElement)
+        {
+            if (tdElement.SelectSingleNode(".//td") != null) return true;
+            return false;
+        }
+
         internal static string[] linkTextsNotToScrape = new string[]
         {
             "home",
