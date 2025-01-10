@@ -64,5 +64,18 @@
     "https://traditioninaction.org/History/H000_Reels.htm",
     "https://traditioninaction.org/History/F_000_PhilosophyHistory.htm#philosophy",
     "https://traditioninaction.org/History/G_000_SecretForces.htm#secret"
+  ],
+  "organicSociety": [
+    "https://traditioninaction.org/OrganicSociety/B000_Principles.htm#principles",
+    "https://traditioninaction.org/OrganicSociety/C000_Clans.htm#clan",
+    "https://traditioninaction.org/OrganicSociety/D000_City.htm#city",
+    "https://traditioninaction.org/OrganicSociety/E000_Guilds.htm#guild",
+    "https://traditioninaction.org/OrganicSociety/F000_Classes.htm#social",
+    "https://traditioninaction.org/OrganicSociety/G000_Govern.htm#gov",
+    "https://traditioninaction.org/OrganicSociety/H000_Power.htm#pow",
+    "https://traditioninaction.org/OrganicSociety/I000_Property.htm#prop",
+    "https://traditioninaction.org/OrganicSociety/J000_Tradition.htm#cust",
+    "https://traditioninaction.org/OrganicSociety/K000_History.htm#prec",
+    "https://traditioninaction.org/OrganicSociety/L000_Revolution.htm#cr"
   ]
 }

@@ -111,7 +111,7 @@ namespace WebScraper.Services
 
         public List<string?> GetSeriesNameAndNumber()
         {
-            HtmlNode? series = _htmlDoc.DocumentNode.SelectSingleNode("//*[@class='GreenSeries' or @class='greenseries']");
+            HtmlNode? series = _htmlDoc.DocumentNode.SelectSingleNode("//*[@class='GreenSeries' or @class='greenseries' or @size='4' and @color='GREEN']");
             if (series == null || string.IsNullOrWhiteSpace(series.InnerText))
             {
                 return null;
