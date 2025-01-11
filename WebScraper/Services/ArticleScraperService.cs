@@ -212,6 +212,12 @@ namespace WebScraper.Services
                 return atilaAuthorList;
             }
 
+            if (category == "OrganicSociety")
+            {
+                List<string> plinioAuthorList = new List<string> { "Plinio Corrêa de Oliveira" };
+                return plinioAuthorList;
+            }
+
             HtmlNode? authorFromAuthorClass = _htmlDoc.DocumentNode.SelectSingleNode("//*[@class='author']");
             if (authorFromAuthorClass != null && !String.IsNullOrWhiteSpace(authorFromAuthorClass.InnerText))
             {
