@@ -80,5 +80,17 @@
   ],
   "bookReviews": [
     "https://traditioninaction.org/bkreviews/A_001_BookIndex.htm#book"
+  ],
+  "movieReviews": [
+    "https://traditioninaction.org/movies/movies.htm#movie"
+  ],
+  "ourLadyOfGoodSuccess": [
+    "https://traditioninaction.org/OLGS/olgshome.htm"
+  ],
+  "theSaintOfTheDay": [
+    "https://traditioninaction.org/SOD/saintsofday.htm"
+  ],
+  "whatPeopleAreCommenting": [
+    "https://traditioninaction.org/Questions/B000_WhatPeopleAreCommenting.htm#commenting"
   ]
 }

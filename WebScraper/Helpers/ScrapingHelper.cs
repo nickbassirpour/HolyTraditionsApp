@@ -92,6 +92,9 @@ namespace WebScraper.Helpers
         {
             "our lady of good success",
             "the saint of the day",
+            "what people are saying",
+            "what people are asking",
+            ""
         };
 
         internal static string[] categoriesWithNoSubcatregory = new string[]
