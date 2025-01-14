@@ -35,7 +35,8 @@ namespace WebScraper.Helpers
             if (String.IsNullOrWhiteSpace(linkElement.InnerText)) return true;
             if (linkElement.InnerText.MatchesAnyOf(ScrapingHelper.linkTextsNotToScrape.ToArray())) return true;
             HtmlNodeCollection aTags = linkElement.SelectNodes(".//a");
-            if (aTags == null || aTags.Count == 0 || aTags.Count > 1) return true;
+            if (aTags == null || aTags.Count == 0) return true;
+            if (aTags.Count > 1 && aTags.Any(a => a.GetAttributeValue("href", null) != null)) return false;
             if (anyBadLinks(aTags)) return true;
             return false;
         }
