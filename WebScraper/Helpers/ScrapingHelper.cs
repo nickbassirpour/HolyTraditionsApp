@@ -55,6 +55,14 @@ namespace WebScraper.Helpers
             return false;
         }
 
+        internal static bool isBadAnchorTag(this HtmlNode anchorNode)
+        {
+            if (String.IsNullOrWhiteSpace(anchorNode.GetAttributeValue("href", ""))) return true;
+            if (anchorNode.GetAttributeValue("href", "").isBadLink()) return true;
+            if (String.IsNullOrWhiteSpace(anchorNode.InnerText)) return true;
+            return false;
+        }
+
         internal static bool isMainTDElement(this HtmlNode tdElement)
         {
             if (tdElement.InnerText.Contains("All Rights Reserved")) return true;

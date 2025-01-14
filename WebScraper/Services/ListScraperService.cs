@@ -76,19 +76,32 @@ namespace WebScraper.Services
             }
             else
             {
-                HtmlNode anchorNode = linkElement.SelectSingleNode(".//a");
+                HtmlDocument linkElementDoc = new HtmlDocument();
+                linkElementDoc.LoadHtml(linkElement.InnerHtml);
+                IEnumerable<HtmlNode> anchorNodes = linkElementDoc.DocumentNode.SelectNodes(".//a");
+                HtmlNode? goodAnchorNode = null;
+                foreach (HtmlNode anchorNode in anchorNodes)
+                {
+                    if (anchorNode.isBadAnchorTag()) continue;
+                    goodAnchorNode = anchorNode;
+                }
+
                 HtmlNode descriptionNode = linkElement.SelectSingleNode(".//span")
                     ?? linkElement.SelectSingleNode(".//*[@size='3' and @color='MAROON']")
                     ?? linkElement.SelectSingleNode(".//*[@color='#800000']")
                     ?? linkElement.SelectSingleNode(".//*[@color='#FF0000']").SelectSingleNode("text()[normalize-space()]")
                     ?? linkElement.SelectSingleNode(".//*[@size='3']");
 
-                return new BaseArticleModel
+                if (goodAnchorNode != null)
                 {
-                    Url = HtmlParsingHelper.CleanLink(anchorNode.GetAttributeValue("href", ""), _url, true),
-                    Title = anchorNode.InnerText.Trim(),
-                    Description = descriptionNode?.InnerText.Trim(),
-                };
+                    return new BaseArticleModel
+                    {
+                        Url = HtmlParsingHelper.CleanLink(goodAnchorNode.GetAttributeValue("href", ""), _url, true),
+                        Title = goodAnchorNode.InnerText.Trim(),
+                        Description = descriptionNode?.InnerText.Trim(),
+                    };
+                }
+                return null;
             }
         }
 
@@ -110,9 +123,7 @@ namespace WebScraper.Services
                     {
                         foreach (HtmlNode anchorNode in anchorNodes)
                         {
-                            if (String.IsNullOrWhiteSpace(anchorNode.GetAttributeValue("href", ""))) continue;
-                            if (anchorNode.GetAttributeValue("href", "").isBadLink()) continue;
-                            if (String.IsNullOrWhiteSpace(anchorNode.InnerText)) continue;
+                            if (anchorNode.isBadAnchorTag()) continue;
                             string? descriptionBeforeCleanUp = bElement.SelectSingleNode("following-sibling::*[@color='#800000']")?.InnerText;
 
                             BaseArticleModel baseArticleModel = new BaseArticleModel 
