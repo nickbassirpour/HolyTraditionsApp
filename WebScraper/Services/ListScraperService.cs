@@ -86,7 +86,7 @@ namespace WebScraper.Services
                     goodAnchorNode = anchorNode;
                 }
 
-                HtmlNode descriptionNode = linkElement.SelectSingleNode(".//span")
+                HtmlNode? descriptionNode = linkElement.SelectSingleNode(".//span")
                     ?? linkElement.SelectSingleNode(".//*[@size='3' and @color='MAROON']")
                     ?? linkElement.SelectSingleNode(".//*[@color='#800000']")
                     ?? linkElement.SelectSingleNode(".//*[@color='#FF0000']").SelectSingleNode("text()[normalize-space()]")
