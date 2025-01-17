@@ -218,7 +218,13 @@ namespace WebScraper.Services
                 return plinioAuthorList;
             }
 
-            HtmlNode? authorFromAuthorClass = _htmlDoc.DocumentNode.SelectSingleNode("//*[@class='author']");
+            if (category == "Questions")
+            {
+                List<string> correspondenceAuthorList = new List<string> { "TIA Correspondence Desk" };
+                return correspondenceAuthorList;
+            }
+
+                HtmlNode? authorFromAuthorClass = _htmlDoc.DocumentNode.SelectSingleNode("//*[@class='author']");
             if (authorFromAuthorClass != null && !String.IsNullOrWhiteSpace(authorFromAuthorClass.InnerText))
             {
                 return SplitAuthors(authorFromAuthorClass);
