@@ -37,7 +37,8 @@ namespace WebScraper.Services
                 {
                     List<BaseArticleModel> articleModels = GetBaseArticleListFromSeries(linkElement);
                     articleLinks.AddRange(articleModels);
-                } else
+                } 
+                else
                 {
                     if (linkElement.IsNullOrBadLink()) continue;
                     BaseArticleModel articleModel = GetBaseArticle(linkElement);

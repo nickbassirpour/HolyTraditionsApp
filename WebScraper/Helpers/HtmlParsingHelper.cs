@@ -35,10 +35,16 @@ namespace WebScraper.Helpers
             List<string> splitHtmlBody = htmlBodyNode.Split("alt=\"contact\">").ToList();
             if (splitHtmlBody.Count > 1)
             {
-                List<string> cleanedHtmlBodyList = Regex.Split(splitHtmlBody[1], @"<!-- AddToAny BEGIN -->", RegexOptions.Singleline).ToList();
-                if (cleanedHtmlBodyList.Count > 1)
+                List<string> cleanedHtmlBodyListFromComment = Regex.Split(splitHtmlBody[1], @"<!-- AddToAny BEGIN -->", RegexOptions.Singleline).ToList();
+                if (cleanedHtmlBodyListFromComment.Count > 1)
                 {
-                    return cleanedHtmlBodyList[0];
+                    return cleanedHtmlBodyListFromComment[0];
+                }
+
+                List<string> cleandHtmlBodyListFromSocialLinks = Regex.Split(splitHtmlBody[1], @"<div class=""a2a_kit a2a_kit_size_32 a2a_default_style""", RegexOptions.Singleline).ToList();
+                if (cleandHtmlBodyListFromSocialLinks.Count > 1)
+                {
+                    return cleandHtmlBodyListFromSocialLinks[0];
                 }
             }
 

@@ -14,20 +14,26 @@ void ScrapeList(string url)
     List<BaseArticleModel> articles = articleListScraper.ScrapeArticles();
     if (articles != null)
     {
+        List<ArticleModel> scrapedArticles = new List<ArticleModel>();
         foreach (BaseArticleModel article in articles)
         {
             if (article.Url.EndsWith(".pdf") || article.Url.Contains("tiabk") || article.Url.EndsWith("pps") || article.Url.EndsWith("mp4"))
             {
                 continue;
             }
-            Scrape(article);
+            ArticleModel scrapedArticle = Scrape(article);
+            if (scrapedArticle != null)
+            {
+                scrapedArticles.Add(scrapedArticle);
+            }
         }
+        Console.WriteLine("Article List Count: " + articles.Count());
+        Console.WriteLine("Article Scrape Count: " + scrapedArticles.Count());
     }
 
 }
-void Scrape(BaseArticleModel baseArticle)
+ArticleModel? Scrape(BaseArticleModel baseArticle)
 {
-    List<ArticleModel> articles = new List<ArticleModel>();
     ArticleScraperService webScraper = new ArticleScraperService(baseArticle);
     ArticleModel article = webScraper.ScrapeArticle();
     if (article != null)
@@ -45,8 +51,9 @@ void Scrape(BaseArticleModel baseArticle)
         Console.WriteLine("Description: " + baseArticle.Description);
         //Console.WriteLine("RelatedArticles: " + article.RelatedArticles);
 
-        articles.Add(article); //add proper validfation
+        return article;
     }
+    return null;
 }
 
 var jsonLinks = System.IO.File.ReadAllText(@"C:\Users\nickb\Desktop\Code_Projects\TIABackend\WebScraper\Data\testLinks.json");
