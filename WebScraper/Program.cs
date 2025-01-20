@@ -11,11 +11,12 @@ using WebScraper.Validation;
 void ScrapeList(string url)
 {
     ListScraperService articleListScraper = new ListScraperService(url);
-    List<BaseArticleModel> articles = articleListScraper.ScrapeArticles();
-    if (articles != null)
+    List<BaseArticleModel> articlesFromList = articleListScraper.ScrapeArticles();
+    if (articlesFromList != null)
     {
         List<ArticleModel> scrapedArticles = new List<ArticleModel>();
-        foreach (BaseArticleModel article in articles)
+        List<BaseArticleModel> notScrapedArticles = new List<BaseArticleModel>();
+        foreach (BaseArticleModel article in articlesFromList)
         {
             if (article.Url.EndsWith(".pdf") || article.Url.Contains("tiabk") || article.Url.EndsWith("pps") || article.Url.EndsWith("mp4"))
             {
@@ -26,9 +27,22 @@ void ScrapeList(string url)
             {
                 scrapedArticles.Add(scrapedArticle);
             }
+            else
+            {
+                notScrapedArticles.Add(article);
+            }
         }
-        Console.WriteLine("Article List Count: " + articles.Count());
+        Console.WriteLine();
+        Console.WriteLine("Article List Count: " + articlesFromList.Count());
         Console.WriteLine("Article Scrape Count: " + scrapedArticles.Count());
+        Console.WriteLine();
+        foreach (BaseArticleModel notScrapedArticle in notScrapedArticles)
+        {
+            Console.WriteLine(notScrapedArticle.Url);
+            Console.WriteLine(notScrapedArticle.Title);
+            Console.WriteLine(notScrapedArticle.Description);
+            Console.WriteLine();
+        }
     }
 
 }
