@@ -3,7 +3,7 @@ using TIAArticleAppAPI.Data;
 
 namespace TIAArticleAppAPI.Services
 {
-    public class ArticleService
+    public class ArticleService : IArticleService
     {
         private readonly ISqlDataAccess _db;
 
@@ -21,7 +21,7 @@ namespace TIAArticleAppAPI.Services
         }
         public void AddNewArticle(ArticleModel article)
         {
-            _db.SaveData<ArticleModel>("dbo.Articles_AddNewArticle", article );
+            _db.SaveData<ArticleModel>("dbo.Articles_AddNewArticle", article);
         }
     }
 }
