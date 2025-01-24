@@ -31,11 +31,11 @@ namespace TIAArticleAppAPI.Data
             }
         }
 
-        public void SaveData<T>(string sqlStatement, T parameters)
+        public async Task SaveData<T>(string sqlStatement, T parameters)
         {
             using (IDbConnection connection = new SqlConnection(_connectionString))
             {
-                connection.Execute(sqlStatement, parameters, commandType: CommandType.StoredProcedure);
+                await connection.ExecuteAsync(sqlStatement, parameters, commandType: CommandType.StoredProcedure);
             }
         }
     }
