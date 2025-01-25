@@ -2,6 +2,9 @@
 using TIAArticleAppAPI.Data;
 using Dapper;
 using System.Data;
+using WebScraper.Validation;
+using WebScraper;
+using TIAArticleAppAPI.Validation;
 
 namespace TIAArticleAppAPI.Services
 {
@@ -21,7 +24,7 @@ namespace TIAArticleAppAPI.Services
         {
             return _db.LoadDataList<BaseArticleModel, dynamic>("dbo.Articles_GetArticleListByCategory", new { category });
         }
-        public async Task<int?> AddNewArticle(ArticleModel article)
+        public async Task<Result<int?, ValidationFailed>> AddNewArticle(ArticleModel article)
         {
             var parameters = new DynamicParameters();
             parameters.Add("@SubCategory", article.SubCategory);
@@ -41,7 +44,11 @@ namespace TIAArticleAppAPI.Services
 
             await _db.SaveData<DynamicParameters>("dbo.Articles_AddNewArticle", parameters);
 
-            return parameters.Get<int?>("@NewArticleId");
+            int? newArticleId = parameters.Get<int?>("@NewArticleId");
+
+            if (!newArticleId.HasValue) return new ValidationFailed("Failed to save article");
+
+            return newArticleId.Value;
         }
     }
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WebScraper
+namespace TIAArticleAppAPI
 {
     public class Result<T1, T2>
     {
