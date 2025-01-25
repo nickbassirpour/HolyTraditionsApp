@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WebScraper.Validation
+namespace TIAArticleAppAPI.Validation
 {
     public record ValidationFailed(string errorMessage)
     {
