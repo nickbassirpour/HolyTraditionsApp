@@ -2,8 +2,6 @@
 using TIAArticleAppAPI.Data;
 using Dapper;
 using System.Data;
-using WebScraper.Validation;
-using WebScraper;
 using TIAArticleAppAPI.Validation;
 
 namespace TIAArticleAppAPI.Services

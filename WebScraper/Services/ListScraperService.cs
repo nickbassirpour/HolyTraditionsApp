@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using WebScraper.Helpers;
 using TIAArticleAppAPI.Models;
-using WebScraper.Validation;
 using System.Data.Common;
 
 namespace WebScraper.Services

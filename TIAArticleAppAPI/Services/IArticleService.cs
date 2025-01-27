@@ -1,10 +1,11 @@
 ﻿using TIAArticleAppAPI.Models;
+using TIAArticleAppAPI.Validation;
 
 namespace TIAArticleAppAPI.Services
 {
     public interface IArticleService
     {
-        Task<int?> AddNewArticle(ArticleModel article);
+        Task<Result<int?, ValidationFailed>> AddNewArticle(ArticleModel article);
         ArticleModel GetArticleByUrl(string url);
         List<BaseArticleModel> GetArticleListByCategory(string category);
     }

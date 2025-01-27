@@ -4,7 +4,6 @@ using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using WebScraper.Helpers;
-using WebScraper.Validation;
 using TIAArticleAppAPI.Models;
 using static System.Net.Mime.MediaTypeNames;
 using System.Drawing;

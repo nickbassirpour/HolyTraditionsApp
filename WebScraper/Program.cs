@@ -6,8 +6,9 @@ using System.Text.RegularExpressions;
 using TIAArticleAppAPI.Models;
 using WebScraper.Enums;
 using WebScraper.Services;
-using WebScraper.Validation;
 
+string apiBaseUrl = "https://localhost:5000";
+string endPoint = $"{apiBaseUrl}/add_new_article";
 void ScrapeList(string url)
 {
     ListScraperService articleListScraper = new ListScraperService(url);

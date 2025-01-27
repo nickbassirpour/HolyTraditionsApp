@@ -22,8 +22,17 @@ namespace TIAArticleAppAPI.Controllers
                 return response.Match<IActionResult>(
                     success =>
                     {
-                        return Statusc
-                    })
+                        return StatusCode(201, response);
+                    },
+                    error =>
+                    {
+                        return StatusCode(500, "Error adding article.");
+                    }
+                );
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
     }
