@@ -1,6 +1,8 @@
 ﻿using HtmlAgilityPack;
+using Newtonsoft.Json;
 using System;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using TIAArticleAppAPI.Models;
@@ -9,7 +11,7 @@ using WebScraper.Services;
 
 string apiBaseUrl = "https://localhost:5000";
 string endPoint = $"{apiBaseUrl}/add_new_article";
-void ScrapeList(string url)
+async void ScrapeList(string url)
 {
     ListScraperService articleListScraper = new ListScraperService(url);
     List<BaseArticleModel> articlesFromList = articleListScraper.ScrapeArticles();
@@ -26,6 +28,10 @@ void ScrapeList(string url)
             ArticleModel scrapedArticle = Scrape(article);
             if (scrapedArticle != null)
             {
+                HttpClient client = new HttpClient();
+                var jsonContent = JsonConvert.SerializeObject(scrapedArticle);
+                HttpContent httpArticle = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+                var response = await client.PostAsync(endPoint, httpArticle);
                 scrapedArticles.Add(scrapedArticle);
             }
             else
