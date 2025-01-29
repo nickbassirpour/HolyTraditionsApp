@@ -1,5 +1,4 @@
 ﻿using HtmlAgilityPack;
-using Newtonsoft.Json;
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -29,7 +28,7 @@ async void ScrapeList(string url)
             if (scrapedArticle != null)
             {
                 HttpClient client = new HttpClient();
-                var jsonContent = JsonConvert.SerializeObject(scrapedArticle);
+                var jsonContent = Newtonsoft.Json.JsonConvert.SerializeObject(scrapedArticle);
                 HttpContent httpArticle = new StringContent(jsonContent, Encoding.UTF8, "application/json");
                 var response = await client.PostAsync(endPoint, httpArticle);
                 scrapedArticles.Add(scrapedArticle);
