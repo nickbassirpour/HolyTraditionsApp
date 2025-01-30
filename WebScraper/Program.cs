@@ -1,4 +1,5 @@
 ﻿using HtmlAgilityPack;
+using Microsoft.AspNetCore.Http.HttpResults;
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -8,7 +9,7 @@ using TIAArticleAppAPI.Models;
 using WebScraper.Enums;
 using WebScraper.Services;
 
-string apiBaseUrl = "https://localhost:5000";
+string apiBaseUrl = "http://localhost:5223";
 string endPoint = $"{apiBaseUrl}/add_new_article";
 async void ScrapeList(string url)
 {
@@ -27,11 +28,19 @@ async void ScrapeList(string url)
             ArticleModel scrapedArticle = Scrape(article);
             if (scrapedArticle != null)
             {
-                HttpClient client = new HttpClient();
-                var jsonContent = Newtonsoft.Json.JsonConvert.SerializeObject(scrapedArticle);
-                HttpContent httpArticle = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-                var response = await client.PostAsync(endPoint, httpArticle);
-                scrapedArticles.Add(scrapedArticle);
+                try
+                {
+                    HttpClient client = new HttpClient();
+                    var jsonContent = Newtonsoft.Json.JsonConvert.SerializeObject(scrapedArticle);
+                    HttpContent httpArticle = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+                    var response = await client.PostAsync(endPoint, httpArticle);
+                    scrapedArticles.Add(scrapedArticle);
+                }
+                catch (Exception ex) 
+                { 
+                    Console.WriteLine(ex.Message);
+                    return;
+                }
             }
             else
             {
@@ -95,6 +104,7 @@ if (links != null)
 
         foreach (string url in urls)
         {
+            await Task.Delay(5000);
             ScrapeList(url);
         }
     }
