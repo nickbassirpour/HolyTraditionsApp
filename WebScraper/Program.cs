@@ -1,16 +1,9 @@
-﻿using HtmlAgilityPack;
-using Microsoft.AspNetCore.Http.HttpResults;
-using System;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Text.Json;
-using System.Text.RegularExpressions;
+﻿using System.Text.Json;
 using TIAArticleAppAPI.Models;
-using WebScraper.Enums;
+using TIAArticleAppAPI.Services;
 using WebScraper.Services;
 
-string apiBaseUrl = "http://localhost:5223";
-string endPoint = $"{apiBaseUrl}/add_new_article";
+string apiBaseUrl = "http://localhost:5223/add_new_article";
 async void ScrapeList(string url)
 {
     ListScraperService articleListScraper = new ListScraperService(url);
@@ -28,19 +21,7 @@ async void ScrapeList(string url)
             ArticleModel scrapedArticle = Scrape(article);
             if (scrapedArticle != null)
             {
-                try
-                {
-                    HttpClient client = new HttpClient();
-                    var jsonContent = Newtonsoft.Json.JsonConvert.SerializeObject(scrapedArticle);
-                    HttpContent httpArticle = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-                    var response = await client.PostAsync(endPoint, httpArticle);
-                    scrapedArticles.Add(scrapedArticle);
-                }
-                catch (Exception ex) 
-                { 
-                    Console.WriteLine(ex.Message);
-                    return;
-                }
+                scrapedArticles.Add(scrapedArticle);
             }
             else
             {
@@ -63,7 +44,7 @@ async void ScrapeList(string url)
 }
 ArticleModel? Scrape(BaseArticleModel baseArticle)
 {
-    ArticleScraperService webScraper = new ArticleScraperService(baseArticle);
+    ArticleScraperService webScraper = new ArticleScraperService(baseArticle, _service);
     ArticleModel article = webScraper.ScrapeArticle();
     if (article != null)
     {

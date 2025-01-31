@@ -8,6 +8,7 @@ using TIAArticleAppAPI.Models;
 using static System.Net.Mime.MediaTypeNames;
 using System.Drawing;
 using Microsoft.AspNetCore.Builder;
+using TIAArticleAppAPI.Services;
 
 namespace WebScraper.Services
 {
@@ -16,12 +17,14 @@ namespace WebScraper.Services
         private HtmlDocument _htmlDoc;
         private BaseArticleModel _baseArticle;
         private string _url;
-        public ArticleScraperService(BaseArticleModel baseArticle)
+        private readonly IArticleService _articleService;
+        public ArticleScraperService(BaseArticleModel baseArticle, IArticleService service)
         {
             _baseArticle = baseArticle;
             _url = baseArticle.Url;
             HtmlWeb web = new HtmlWeb { OverrideEncoding = Encoding.UTF8 };
             _htmlDoc = web.Load(_url);
+            _articleService = service;
         }
 
         public ArticleModel ScrapeArticle()
@@ -34,9 +37,7 @@ namespace WebScraper.Services
             }
             string category = HtmlParsingHelper.GetCategoryFromURL(_url);
 
-            // delete me
             Console.WriteLine();
-            //Console.WriteLine(_url);
 
             ArticleModel articleModel = new ArticleModel();
             articleModel.Url = _url;
@@ -51,6 +52,9 @@ namespace WebScraper.Services
             articleModel.ThumbnailURL = GetThumbnailUrl(splitHtmlBody);
             articleModel.Date = GetDate(category);
             articleModel.RelatedArticles = GetRelatedArticles(splitHtmlBody);
+
+            _articleService.AddNewArticle(articleModel);
+
             return articleModel;
         }
 
