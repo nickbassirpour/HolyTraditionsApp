@@ -18,13 +18,13 @@ namespace WebScraper.Helpers
 
         public async Task StartScraping(Dictionary<string, List<string>> links)
         {
-            ListScraperService articleListScraper = new ListScraperService(url, _service);
+            ListScraperService articleListScraper = new ListScraperService(_service);
             foreach (var category in links)
             {
                 foreach (string url in category.Value)
                 {
                     await Task.Delay(5000);
-                    await scrapeList.Scrape(url);
+                    await articleListScraper.ScrapeList(url);
                 }
             }
         }

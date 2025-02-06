@@ -32,8 +32,8 @@ namespace WebScraper.Services
                     {
                         continue;
                     }
-                    ArticleScraperService webScraper = new ArticleScraperService(article);
-                    ArticleModel finishedArticle = webScraper.ScrapeArticle();
+                    ArticleScraperService webScraper = new ArticleScraperService(_articleService);
+                    ArticleModel scrapedArticle = webScraper.ScrapeArticle();
                     if (scrapedArticle != null)
                     {
                         scrapedArticles.Add(scrapedArticle);
