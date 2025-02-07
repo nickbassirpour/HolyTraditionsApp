@@ -81,7 +81,7 @@ var links = JsonSerializer.Deserialize<Dictionary<string, List<string>>>(jsonLin
 if (links != null)
 {
     SqlDataAccess db = new SqlDataAccess();
-    IArticleService articleService = new ArticleService(); // Replace with actual implementation
+    IArticleService articleService = new ArticleService(db); // Replace with actual implementation
     ScraperManager scraperManager = new ScraperManager(articleService);
 
     foreach (var category in links)

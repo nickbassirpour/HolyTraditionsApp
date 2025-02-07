@@ -8,6 +8,8 @@ using WebScraper.Helpers;
 using TIAArticleAppAPI.Models;
 using System.Data.Common;
 using TIAArticleAppAPI.Services;
+using System.ComponentModel;
+using System.Collections.Specialized;
 
 namespace WebScraper.Services
 {
@@ -19,21 +21,26 @@ namespace WebScraper.Services
             _articleService = service;
         }
 
-        internal async void ScrapeList(string url)
+        internal async Task<List<BaseArticleModel>> ScrapeList(string url)
         {
             List<BaseArticleModel> articlesFromList = ScrapeArticles(url);
             if (articlesFromList != null)
             {
                 List<ArticleModel> scrapedArticles = new List<ArticleModel>();
                 List<BaseArticleModel> notScrapedArticles = new List<BaseArticleModel>();
+                ArticleScraperService webScraper = new ArticleScraperService(_articleService);
+
                 foreach (BaseArticleModel article in articlesFromList)
                 {
                     if (article.Url.EndsWith(".pdf") || article.Url.Contains("tiabk") || article.Url.EndsWith("pps") || article.Url.EndsWith("mp4"))
                     {
                         continue;
                     }
-                    ArticleScraperService webScraper = new ArticleScraperService(_articleService);
-                    ArticleModel scrapedArticle = webScraper.ScrapeArticle();
+
+                    HtmlWeb web = new HtmlWeb { OverrideEncoding = Encoding.UTF8 };
+                    HtmlDocument htmlDoc = web.Load(article.Url);
+                    ArticleModel scrapedArticle = webScraper.ScrapeArticle(htmlDoc, article.Url, article.Title);
+
                     if (scrapedArticle != null)
                     {
                         scrapedArticles.Add(scrapedArticle);
@@ -55,7 +62,7 @@ namespace WebScraper.Services
                     Console.WriteLine();
                 }
             }
-
+            return articlesFromList;
         }
 
         internal List<BaseArticleModel>? ScrapeArticles(string url)
