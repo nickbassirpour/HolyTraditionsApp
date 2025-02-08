@@ -1,10 +1,14 @@
-﻿using System;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 using TIAArticleAppAPI.Data;
 using TIAArticleAppAPI.Models;
 using TIAArticleAppAPI.Services;
 using WebScraper.Helpers;
 using WebScraper.Services;
+
 
 
 
@@ -75,12 +79,14 @@ using WebScraper.Services;
 //    return null;
 //}
 
+var serviceProvider = ConfigureServices();
+
 var jsonLinks = System.IO.File.ReadAllText(@"C:\Users\nickb\Desktop\Code_Projects\TIABackend\WebScraper\Data\testLinks.json");
 var links = JsonSerializer.Deserialize<Dictionary<string, List<string>>>(jsonLinks);
 
 if (links != null)
 {
-    SqlDataAccess db = new SqlDataAccess();
+    //SqlDataAccess db = new SqlDataAccess();
     IArticleService articleService = new ArticleService(db); // Replace with actual implementation
     ScraperManager scraperManager = new ScraperManager(articleService);
 
@@ -102,4 +108,24 @@ if (links != null)
         }
     }
 }
+
+static ServiceProvider ConfigureServices()
+{
+    var config = new ConfigurationBuilder()
+        .SetBasePath(Directory.GetCurrentDirectory())
+        .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+        .Build();
+
+    var services = new ServiceCollection();
+
+    services.AddSingleton<IConfiguration>(config);
+
+    services.AddSingleton<ISqlDataAccess, SqlDataAccess>();
+
+    services.AddSingleton<IArticleService, ArticleService>();
+
+    services.AddSingleton<ScrapingManager>();
+
+}
+
 
