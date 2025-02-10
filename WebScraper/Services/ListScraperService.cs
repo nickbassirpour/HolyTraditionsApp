@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WebScraper.Helpers;
-using TIAArticleAppAPI.Models;
+using Webscraper.Models;
 using System.Data.Common;
 using TIAArticleAppAPI.Services;
 using System.ComponentModel;
