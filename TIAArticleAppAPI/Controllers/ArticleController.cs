@@ -16,7 +16,7 @@ namespace TIAArticleAppAPI.Controllers
 
         [AllowAnonymous]
         [HttpPost("add_new_article")]
-        public async Task<IActionResult> AddArticle(ArticleModel article)
+        public async Task<IActionResult> AddArticle([FromBody] ArticleModel article)
         {
             try
             {
