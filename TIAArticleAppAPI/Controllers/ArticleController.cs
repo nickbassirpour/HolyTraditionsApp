@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TIAArticleAppAPI.Models;
 using TIAArticleAppAPI.Services;
 
@@ -13,6 +14,7 @@ namespace TIAArticleAppAPI.Controllers
             _service = service;
         }
 
+        [AllowAnonymous]
         [HttpPost("add_new_article")]
         public async Task<IActionResult> AddArticle(ArticleModel article)
         {

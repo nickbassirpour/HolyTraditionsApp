@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "TIAWebScraper (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "TIAWebScraper (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

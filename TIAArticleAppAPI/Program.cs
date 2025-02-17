@@ -1,6 +1,11 @@
+using TIAArticleAppAPI.Data;
+using TIAArticleAppAPI.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddSingleton<IArticleService, ArticleService>();
+builder.Services.AddSingleton<ISqlDataAccess, SqlDataAccess>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
