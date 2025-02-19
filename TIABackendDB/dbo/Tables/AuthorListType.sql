@@ -1,0 +1,4 @@
+﻿CREATE TYPE AuthorListType AS TABLE
+(
+	Name NVARCHAR(255)
+)
