@@ -33,14 +33,22 @@ namespace TIAArticleAppAPI.Services
             parameters.Add("@ThumbnailURL", article.ThumbnailURL);
             parameters.Add("@Series", article.Series);
             parameters.Add("@SeriesNumber", article.SeriesNumber);
-            parameters.Add("@Author", article.Author);
+            parameters.Add("@Authors", article.Author);
             parameters.Add("@BodyHtml", article.BodyHtml);
             parameters.Add("@BodyInnerText", article.BodyInnerText);
             parameters.Add("@Date", article.Date);
             parameters.Add("@RelatedArticles", article.RelatedArticles);
             parameters.Add("@NewArticleId", dbType: DbType.Int32, direction: ParameterDirection.Output); 
 
-            await _db.SaveData<DynamicParameters>("dbo.Articles_AddNewArticle", parameters);
+            try
+            {
+                await _db.SaveData<DynamicParameters>("dbo.Articles_AddNewArticle", parameters);
+            }
+            catch (Exception ex)
+            {
+                string message = ex.Message;   
+                Console.WriteLine(message);
+            }
 
             int? newArticleId = parameters.Get<int?>("@NewArticleId");
 
