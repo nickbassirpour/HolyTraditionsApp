@@ -33,7 +33,11 @@ namespace TIAArticleAppAPI.Services
             parameters.Add("@ThumbnailURL", article.ThumbnailURL);
             parameters.Add("@Series", article.Series);
             parameters.Add("@SeriesNumber", article.SeriesNumber);
-            parameters.Add("@Authors", article.Author);
+
+            DataTable authorTable = ConvertAuthorsToDataTable(article.Author);
+            if (authorTable != null) parameters.Add("@Authors", authorTable.AsTableValuedParameter("AuthorListType"));
+            else parameters.Add("@Authors", null);
+
             parameters.Add("@BodyHtml", article.BodyHtml);
             parameters.Add("@BodyInnerText", article.BodyInnerText);
             parameters.Add("@Date", article.Date);
@@ -55,6 +59,19 @@ namespace TIAArticleAppAPI.Services
             if (!newArticleId.HasValue) return new ValidationFailed("Failed to save article");
 
             return newArticleId.Value;
+        }
+
+        private static DataTable? ConvertAuthorsToDataTable(List<String> authors)
+        {
+            if (authors == null) return null;
+            DataTable authorTable = new DataTable();
+            authorTable.Columns.Add("Name", typeof(string));
+
+            foreach (var author in authors)
+            {
+                authorTable.Rows.Add(author);
+            }
+            return authorTable;
         }
     }
 }
