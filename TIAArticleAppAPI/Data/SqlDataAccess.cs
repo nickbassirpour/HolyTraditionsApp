@@ -6,12 +6,11 @@ namespace TIAArticleAppAPI.Data
 {
     public class SqlDataAccess : ISqlDataAccess
     {
-        private readonly IConfiguration _config;
         private readonly string _connectionString;
         public SqlDataAccess(IConfiguration config)
         {
-            _config = config;
-            _connectionString = _config.GetConnectionString("ConnectionString");
+            _connectionString = config.GetConnectionString("ConnectionString")
+                ?? throw new InvalidOperationException("Database connection string is missing.");
         }
 
         public List<T> LoadDataList<T, U>(string sqlStatement, U parameters)

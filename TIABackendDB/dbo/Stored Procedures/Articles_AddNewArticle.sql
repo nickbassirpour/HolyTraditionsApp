@@ -11,7 +11,7 @@
 	@BodyHtml nvarchar(MAX),
 	@BodyInnerText nvarchar(MAX),
 	@Date date,
-	@RelatedArticles nvarchar(MAX)
+	@RelatedArticles RelatedArticleListType READONLY
 	
 AS
 BEGIN
@@ -74,6 +74,11 @@ BEGIN
 		(ArticleId, AuthorId)
 	SELECT 
 		@ArticleId, Id FROM @AuthorIds;
+
+	INSERT INTO dbo.RelatedArticle 
+		([Title], [Url], [ArticleId])
+	SELECT
+		ra.Title, ra.Url, @ArticleId FROM @RelatedArticles ra
 
 	RETURN 0;
 

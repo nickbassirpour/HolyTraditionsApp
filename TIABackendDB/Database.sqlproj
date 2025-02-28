@@ -69,6 +69,8 @@
     <Build Include="dbo\Tables\Author.sql" />
     <Build Include="dbo\Tables\Author_Article.sql" />
     <Build Include="dbo\Tables\AuthorListType.sql" />
+    <Build Include="dbo\Tables\RelatedArticle.sql" />
+    <Build Include="dbo\Tables\RelatedArticleListType.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Database.publish.xml" />
