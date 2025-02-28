@@ -9,7 +9,7 @@ namespace TIAArticleAppAPI.Data
         private readonly string _connectionString;
         public SqlDataAccess(IConfiguration config)
         {
-            _connectionString = config.GetConnectionString("ConnectionString")
+            _connectionString = config.GetConnectionString("DefaultConnection")
                 ?? throw new InvalidOperationException("Database connection string is missing.");
         }
 
