@@ -63,17 +63,33 @@ BEGIN
 	SELECT a.Name FROM @Authors a
 	WHERE NOT EXISTS (SELECT 1 from dbo.Author WHERE [Name] = a.Name);
 
+	DECLARE @ArticleId INT;
+
 	INSERT INTO dbo.Article 
 		([Title], [Url], [Description], [ThumbnailUrl], [BodyHtml], [BodyInnerText], [Date], [SubCategoryId])
 	VALUES 
 		(@Title, @Url, @Description, @ThumbnailUrl, @BodyHtml, @BodyInnerText, @Date, @SubCategoryId);
-
-	DECLARE @ArticleId INT = SCOPE_IDENTITY();
+	SET @ArticleId = SCOPE_IDENTITY();
 
 	INSERT INTO dbo.Author_Article 
 		(ArticleId, AuthorId)
 	SELECT 
 		@ArticleId, Id FROM @AuthorIds;
+
+	DECLARE @SeriesId INT;
+
+	IF NOT EXISTS (SELECT 1 FROM dbo.Series WHERE [Name] = @Series)
+	BEGIN
+		INSERT INTO dbo.Series 
+			([Name])
+		VALUES
+			(@Series)
+	SET @SeriesId = SCOPE_IDENTITY();
+
+	INSERT INTO dbo.Series_Articles
+		(SeriesId, SeriesNumber, ArticleId)
+		VALUES
+		(@SeriesId, @SeriesNumber, @ArticleId)
 
 	INSERT INTO dbo.RelatedArticle 
 		([Title], [Url], [ArticleId])

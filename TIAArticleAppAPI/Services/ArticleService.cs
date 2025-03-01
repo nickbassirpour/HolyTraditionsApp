@@ -3,6 +3,8 @@ using TIAArticleAppAPI.Data;
 using Dapper;
 using System.Data;
 using TIAArticleAppAPI.Validation;
+using System.Data.SqlClient;
+using System.Diagnostics;
 
 namespace TIAArticleAppAPI.Services
 {
@@ -53,16 +55,26 @@ namespace TIAArticleAppAPI.Services
             }
             else parameters.Add("@RelatedArticles", null, DbType.Object);
 
-            parameters.Add("@NewArticleId", dbType: DbType.Int32, direction: ParameterDirection.Output); 
+            parameters.Add("@NewArticleId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
             try
             {
+                Debug.WriteLine("Before calling SaveData");
                 await _db.SaveData<DynamicParameters>("dbo.Articles_AddNewArticle", parameters);
+                Debug.WriteLine("After calling SaveData");
+            }
+            catch (SqlException ex)
+            {
+                Debug.WriteLine($"SQL Exception: {ex.Message}");
+                Debug.WriteLine($"Error Code: {ex.Number}");
+                foreach (SqlError error in ex.Errors)
+                {
+                    Debug.WriteLine($"Error: {error.Number} - {error.Message}");
+                }
             }
             catch (Exception ex)
             {
-                string message = ex.Message;   
-                Console.WriteLine(message);
+                Debug.WriteLine($"General Exception: {ex.Message}");
             }
 
             int? newArticleId = parameters.Get<int?>("@NewArticleId");
