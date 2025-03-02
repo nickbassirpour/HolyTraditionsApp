@@ -11,7 +11,8 @@
 	@BodyHtml nvarchar(MAX),
 	@BodyInnerText nvarchar(MAX),
 	@Date date,
-	@RelatedArticles RelatedArticleListType READONLY
+	@RelatedArticles RelatedArticleListType READONLY,
+	@NewArticleId INT OUTPUT
 	
 AS
 BEGIN
@@ -63,6 +64,9 @@ BEGIN
 	SELECT a.Name FROM @Authors a
 	WHERE NOT EXISTS (SELECT 1 from dbo.Author WHERE [Name] = a.Name);
 
+	INSERT INTO @AuthorIds (Id)
+	SELECT Id FROM dbo.Author WHERE [Name] IN (SELECT Name FROM @Authors);
+
 	DECLARE @ArticleId INT;
 
 	INSERT INTO dbo.Article 
@@ -78,13 +82,18 @@ BEGIN
 
 	DECLARE @SeriesId INT;
 
-	IF NOT EXISTS (SELECT 1 FROM dbo.Series WHERE [Name] = @Series)
+	SELECT @SeriesId = Id FROM dbo.Series WHERE [Name] = @Series;
+
+	IF @SeriesId IS NULL 
 	BEGIN
-		INSERT INTO dbo.Series 
-			([Name])
-		VALUES
-			(@Series)
-	SET @SeriesId = SCOPE_IDENTITY();
+		INSERT INTO 
+			dbo.Series 
+				([Name])
+			VALUES
+				(@Series)
+		SET 
+			@SeriesId = SCOPE_IDENTITY();
+	END
 
 	INSERT INTO dbo.Series_Articles
 		(SeriesId, SeriesNumber, ArticleId)
@@ -95,6 +104,8 @@ BEGIN
 		([Title], [Url], [ArticleId])
 	SELECT
 		ra.Title, ra.Url, @ArticleId FROM @RelatedArticles ra
+
+	SET @NewArticleId = @ArticleId;
 
 	RETURN 0;
 
