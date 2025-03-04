@@ -32,7 +32,7 @@ namespace TIAArticleAppAPI.Services
             parameters.Add("@Url", article.Url);
             parameters.Add("@Category", article.Category);
             parameters.Add("@Description", article.Description);
-            parameters.Add("@ThumbnailURL", article.ThumbnailURL);
+            parameters.Add("@ThumbnailUrl", article.ThumbnailURL);
             parameters.Add("@Series", article.Series);
             parameters.Add("@SeriesNumber", article.SeriesNumber);
 
@@ -41,7 +41,7 @@ namespace TIAArticleAppAPI.Services
                 DataTable authorTable = ConvertAuthorsToDataTable(article.Author);
                 parameters.Add("@Authors", authorTable.AsTableValuedParameter("AuthorListType"));
             }
-            else parameters.Add("@Authors", null, DbType.Object);
+            else parameters.Add("@Authors", new DataTable().AsTableValuedParameter("AuthorListType"));
 
             parameters.Add("@BodyHtml", article.BodyHtml);
             parameters.Add("@BodyInnerText", article.BodyInnerText);
@@ -53,7 +53,7 @@ namespace TIAArticleAppAPI.Services
                 DataTable relatedArticleTable = ConvertRelatedArticlesToDataTable(article.RelatedArticles);
                 parameters.Add("@RelatedArticles", relatedArticleTable.AsTableValuedParameter("RelatedArticleListType"));
             }
-            else parameters.Add("@RelatedArticles", null, DbType.Object);
+            else parameters.Add("@RelatedArticles", new DataTable().AsTableValuedParameter("RelatedArticleListType"));
 
             parameters.Add("@NewArticleId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
