@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[SubCategory]
 (
-	[Id] INT NOT NULL PRIMARY KEY,
+	[Id] INT IDENTITY(1, 1) NOT NULL PRIMARY KEY,
 	[Name] VARCHAR(100) NOT NULL,
 	[CategoryId] INT NOT NULL,
 	CONSTRAINT FK_SubCategory_Category 

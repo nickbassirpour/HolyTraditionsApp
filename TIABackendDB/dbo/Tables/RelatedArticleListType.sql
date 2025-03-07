@@ -1,5 +1,5 @@
 ﻿CREATE TYPE RelatedArticleListType AS TABLE
 (
-	Title NVARCHAR(300),
-	Url VARCHAR(MAX)
+	Title NVARCHAR(300) NOT NULL,
+	Url NVARCHAR(300) NOT NULL
 )

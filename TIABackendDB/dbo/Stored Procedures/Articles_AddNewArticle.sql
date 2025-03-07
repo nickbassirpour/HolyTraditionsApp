@@ -16,6 +16,11 @@
 	
 AS
 BEGIN
+	IF EXISTS (SELECT 1 FROM dbo.Article WHERE Url = @Url)
+	BEGIN
+		RAISERROR('Article with this URL already exists.', 16, 1);
+		RETURN;
+	END
 	
 	SET NOCOUNT ON;
 
@@ -68,52 +73,57 @@ BEGIN
 					)
 				SET @SubCategoryId = SCOPE_IDENTITY()
 		END
+
+	IF EXISTS (SELECT 1 FROM @Authors)
+	BEGIN
 	
-	DECLARE @AuthorIds TABLE (Id INT);
+		DECLARE @AuthorIds TABLE (Id INT);
 
-	INSERT INTO 
-			dbo.Author ([Name])
-		OUTPUT 
-			INSERTED.Id INTO @AuthorIds
-		SELECT 
-			[Name]
-		FROM 
-			@Authors
-		WHERE 
-			NOT EXISTS 
-				(
-				SELECT 
-					1 
-				FROM 
-					dbo.Author a
-				WHERE 
-					[Name] = a.Name
-				);
-
-	INSERT INTO 
-			@AuthorIds (Id)
-		SELECT 
-			Id 
-		FROM 
-			dbo.Author 
-		WHERE
-			[Name]
-		IN 
-			(
+		INSERT INTO 
+				dbo.Author ([Name])
+			OUTPUT 
+				INSERTED.Id INTO @AuthorIds
 			SELECT 
-				[Name] 
+				[Name]
 			FROM 
 				@Authors
-			)
-		AND 
-			Id
-		NOT IN 
-			(
+			WHERE 
+				NOT EXISTS 
+					(
+					SELECT 
+						1 
+					FROM 
+						dbo.Author a
+					WHERE 
+						[Name] = a.Name
+					);
+
+		INSERT INTO 
+				@AuthorIds (Id)
 			SELECT 
 				Id 
-			FROM
-				@AuthorIds
-			);
+			FROM 
+				dbo.Author 
+			WHERE
+				[Name]
+			IN 
+				(
+				SELECT 
+					[Name] 
+				FROM 
+					@Authors
+				)
+			AND 
+				Id
+			NOT IN 
+				(
+				SELECT 
+					Id 
+				FROM
+					@AuthorIds
+				);
+
+		END
 			
 
 	DECLARE @ArticleId INT;
@@ -155,54 +165,63 @@ BEGIN
 	FROM 
 		@AuthorIds ai;
 
-	DECLARE @SeriesId INT;
-
-	SELECT 
-		@SeriesId = s.Id 
-	FROM 
-		dbo.Series s
-	WHERE 
-		[Name] = @Series;
-
-	IF @SeriesId IS NULL 
-
+	IF @Series IS NOT NULL
 	BEGIN
+
+		DECLARE @SeriesId INT;
+
+		SELECT 
+			@SeriesId = s.Id 
+		FROM 
+			dbo.Series s
+		WHERE 
+			[Name] = @Series;
+	
+		IF @SeriesId IS NULL 
+
+		BEGIN
+			INSERT INTO 
+				dbo.Series 
+					([Name])
+				VALUES
+					(@Series)
+			SET 
+				@SeriesId = SCOPE_IDENTITY();
+		END
+
 		INSERT INTO 
-			dbo.Series 
-				([Name])
+			dbo.Series_Articles
+			(
+			SeriesId, 
+			SeriesNumber, 
+			ArticleId
+			)
 			VALUES
-				(@Series)
-		SET 
-			@SeriesId = SCOPE_IDENTITY();
+			(
+			@SeriesId, 
+			@SeriesNumber, 
+			@ArticleId
+			)
+
 	END
 
-	INSERT INTO 
-		dbo.Series_Articles
-		(
-		SeriesId, 
-		SeriesNumber, 
-		ArticleId
-		)
-		VALUES
-		(
-		@SeriesId, 
-		@SeriesNumber, 
-		@ArticleId
-		)
+	IF EXISTS (SELECT 1 FROM @RelatedArticles)
+	BEGIN
 
-	INSERT INTO 
-		dbo.RelatedArticle 
-		(
-		[Title], 
-		[Url], 
-		[ArticleId]
-		)
-	SELECT
-		ra.Title, 
-		ra.Url, 
-		@ArticleId 
-	FROM 
-		@RelatedArticles ra
+		INSERT INTO 
+			dbo.RelatedArticle 
+			(
+			[Title], 
+			[Url], 
+			[ArticleId]
+			)
+		SELECT
+			ra.[Title], 
+			ra.[Url], 
+			@ArticleId 
+		FROM 
+			@RelatedArticles ra
+	END
 
 	SET @NewArticleId = @ArticleId;
 

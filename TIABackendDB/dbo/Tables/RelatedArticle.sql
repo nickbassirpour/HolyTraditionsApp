@@ -1,11 +1,11 @@
 ﻿CREATE TABLE [dbo].[RelatedArticle]
 (
-	[Id] INT NOT NULL PRIMARY KEY,
+	[Id] INT IDENTITY(1, 1) NOT NULL PRIMARY KEY,
 	[ArticleId] INT NOT NULL,
-	CONSTRAINT FK_Article_RelatedArticle FOREIGN KEY (ArticleId) REFERENCES RelatedArticle(Id),
-	[Url] VARCHAR(500) NOT NULL,
-	[Title] NVARCHAR(MAX) NOT NULL,
-	[ThumbnailUrl] VARCHAR(500),
+	CONSTRAINT FK_Article_RelatedArticle FOREIGN KEY (ArticleId) REFERENCES Article(Id),
+	[Url] VARCHAR(300) NOT NULL,
+	[Title] NVARCHAR(300) NOT NULL,
+	[ThumbnailUrl] VARCHAR(300),
 	[Category] VARCHAR(100)
 )
 

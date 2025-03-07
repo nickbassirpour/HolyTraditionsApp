@@ -26,6 +26,19 @@ namespace TIAArticleAppAPI.Services
         }
         public async Task<Result<int?, ValidationFailed>> AddNewArticle(ArticleModel article)
         {
+            // Log each property before adding to parameters
+            Debug.WriteLine($"SubCategory: {article.SubCategory}");
+            Debug.WriteLine($"Title: {article.Title}");
+            Debug.WriteLine($"Url: {article.Url}");
+            Debug.WriteLine($"Category: {article.Category}");
+            Debug.WriteLine($"Description: {article.Description}");
+            Debug.WriteLine($"ThumbnailUrl: {article.ThumbnailURL}");
+            Debug.WriteLine($"Series: {article.Series}");
+            Debug.WriteLine($"SeriesNumber: {article.SeriesNumber}");
+            Debug.WriteLine($"BodyHtml: {article.BodyHtml != null}");
+            Debug.WriteLine($"BodyInnerText: {article.BodyInnerText != null}");
+            Debug.WriteLine($"Date: {article.Date}");
+
             var parameters = new DynamicParameters();
             parameters.Add("@SubCategory", article.SubCategory);
             parameters.Add("@Title", article.Title);
@@ -40,8 +53,17 @@ namespace TIAArticleAppAPI.Services
             {
                 DataTable authorTable = ConvertAuthorsToDataTable(article.Author);
                 parameters.Add("@Authors", authorTable.AsTableValuedParameter("AuthorListType"));
+                Debug.WriteLine("Authors:");
+                foreach (var author in article.Author)
+                {
+                    Debug.WriteLine($" - {author}");
+                }
             }
-            else parameters.Add("@Authors", new DataTable().AsTableValuedParameter("AuthorListType"));
+            else
+            {
+                parameters.Add("@Authors", new DataTable().AsTableValuedParameter("AuthorListType"));
+                Debug.WriteLine("Authors: NULL or Empty");
+            }
 
             parameters.Add("@BodyHtml", article.BodyHtml);
             parameters.Add("@BodyInnerText", article.BodyInnerText);
@@ -52,8 +74,17 @@ namespace TIAArticleAppAPI.Services
             {
                 DataTable relatedArticleTable = ConvertRelatedArticlesToDataTable(article.RelatedArticles);
                 parameters.Add("@RelatedArticles", relatedArticleTable.AsTableValuedParameter("RelatedArticleListType"));
+                Debug.WriteLine("Related Articles:");
+                foreach (var related in article.RelatedArticles)
+                {
+                    Debug.WriteLine($" - {related.Url}, {related.Title}");
+                }
             }
-            else parameters.Add("@RelatedArticles", new DataTable().AsTableValuedParameter("RelatedArticleListType"));
+            else
+            {
+                parameters.Add("@RelatedArticles", new DataTable().AsTableValuedParameter("RelatedArticleListType"));
+                Debug.WriteLine("Related Articles: NULL or Empty");
+            }
 
             parameters.Add("@NewArticleId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
@@ -105,7 +136,7 @@ namespace TIAArticleAppAPI.Services
 
             foreach (var relatedArticle in relatedArticles)
             {
-                relatedArticlesTable.Rows.Add(relatedArticle);
+                relatedArticlesTable.Rows.Add(relatedArticle.Title, relatedArticle.Url);
             }
             return relatedArticlesTable;
         }
