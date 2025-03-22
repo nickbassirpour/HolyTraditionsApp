@@ -13,7 +13,7 @@ namespace TIAArticleAppAPI.Data
                 ?? throw new InvalidOperationException("Database connection string is missing.");
         }
 
-        public List<T> LoadDataList<T, U>(string sqlStatement, U parameters)
+        public async Task<List<T>> LoadDataList<T, U>(string sqlStatement, U parameters)
         {
             using (IDbConnection connection = new SqlConnection(_connectionString))
             {

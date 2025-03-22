@@ -7,6 +7,6 @@ namespace TIAArticleAppAPI.Services
     {
         Task<Result<int?, ValidationFailed>> AddNewArticle(ArticleModel article);
         ArticleModel GetArticleByUrl(string url);
-        List<BaseArticleModel> GetArticleListByCategory(string category);
+        Task<Result<List<BaseArticleModel>, ValidationFailed>> GetArticleListByCategory(string category, int limit);
     }
 }

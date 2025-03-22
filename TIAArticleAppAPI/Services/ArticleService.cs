@@ -20,9 +20,13 @@ namespace TIAArticleAppAPI.Services
         {
             return _db.LoadDataObject<ArticleModel, dynamic>("dbo.Articles_GetArticleByUrl", new { url });
         }
-        public List<BaseArticleModel> GetArticleListByCategory(string category)
+        public async Task<Result<List<BaseArticleModel>, ValidationFailed>> GetArticleListByCategory(string category, int limit)
         {
-            return _db.LoadDataList<BaseArticleModel, dynamic>("dbo.Articles_GetArticleListByCategory", new { category });
+            var parameters = new DynamicParameters();
+            parameters.Add("@Category", category);
+            parameters.Add("@Limit", limit);
+
+            return await _db.LoadDataList<BaseArticleModel, DynamicParameters>("dbo.Articles_GetArticleListByCategory", parameters);
         }
         public async Task<Result<int?, ValidationFailed>> AddNewArticle(ArticleModel article)
         {
@@ -90,9 +94,7 @@ namespace TIAArticleAppAPI.Services
 
             try
             {
-                Debug.WriteLine("Before calling SaveData");
                 await _db.SaveData<DynamicParameters>("dbo.Articles_AddNewArticle", parameters);
-                Debug.WriteLine("After calling SaveData");
             }
             catch (SqlException ex)
             {
