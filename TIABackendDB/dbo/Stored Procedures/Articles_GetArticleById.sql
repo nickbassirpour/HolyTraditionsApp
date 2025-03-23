@@ -4,7 +4,7 @@ AS
 BEGIN
 	SELECT 
 		a.*,
-		'[' + STRING_AGG(QUOTENAME(au.Name, '"'), ', ') + ']' as author,
+		'[' + STRING_AGG(QUOTENAME(au.Name, '"'), ', ') + ']' as authorJson,
 		c.[Name] as "category",
 		sc.[Name] as "subCategory",
 		(

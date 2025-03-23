@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace TIAArticleAppAPI.Models
@@ -13,15 +12,9 @@ namespace TIAArticleAppAPI.Models
         public string? SubCategory { get; set; }
         public string? Series {  get; set; }
         public string? SeriesNumber { get; set; }
-        public List<string?> Author {
-            get => string.IsNullOrEmpty(AuthorJson)
-                ? new List<string?>()
-                : JsonSerializer.Deserialize<List<string?>>(AuthorJson)
-                ?? new List<string?>();
-            set => AuthorJson = JsonSerializer.Serialize(value); 
-        }
-        public string? AuthorJson { get; set; }
+        public List<string?> Author { get; set; }
         [Required]
+        public string AuthorJson { get; set; }
         public string BodyHtml { get; set; }
         [Required]
         public string BodyInnerText { get; set; }

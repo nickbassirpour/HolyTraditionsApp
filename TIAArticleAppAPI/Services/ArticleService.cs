@@ -5,6 +5,7 @@ using System.Data;
 using TIAArticleAppAPI.Validation;
 using System.Data.SqlClient;
 using System.Diagnostics;
+using System.Text.Json;
 
 namespace TIAArticleAppAPI.Services
 {
@@ -43,7 +44,13 @@ namespace TIAArticleAppAPI.Services
             var parameters = new DynamicParameters();
             parameters.Add("@ArticleId", articleId);
 
-            return await _db.LoadDataObject<ArticleModel, DynamicParameters>("dbo.Articles_GetArticleById", parameters);
+            var article = await _db.LoadDataObject<ArticleModel, DynamicParameters>("dbo.Articles_GetArticleById", parameters);
+
+            article.Author = string.IsNullOrEmpty(article.AuthorJson)
+            ? new List<string?>()
+            : JsonSerializer.Deserialize<List<string?>>(article.AuthorJson) ?? new List<string?>();
+
+            return article;
         }
         public async Task<Result<int?, ValidationFailed>> AddNewArticle(ArticleModel article)
         {
