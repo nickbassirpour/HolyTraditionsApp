@@ -16,9 +16,9 @@ namespace TIAArticleAppAPI.Services
         {
             _db = db;
         }
-        public ArticleModel GetArticleByUrl(string url)
+        public async Task<ArticleModel> GetArticleByUrl(string url)
         {
-            return _db.LoadDataObject<ArticleModel, dynamic>("dbo.Articles_GetArticleByUrl", new { url });
+            return await _db.LoadDataObject<ArticleModel, dynamic>("dbo.Articles_GetArticleByUrl", new { url });
         }
         public async Task<Result<List<BaseArticleModel>, ValidationFailed>> GetArticleListByCategory(string category, int limit)
         {
@@ -27,6 +27,23 @@ namespace TIAArticleAppAPI.Services
             parameters.Add("@Limit", limit);
 
             return await _db.LoadDataList<BaseArticleModel, DynamicParameters>("dbo.Articles_GetArticleListByCategory", parameters);
+        }
+
+        public async Task<Result<List<BaseArticleModel>, ValidationFailed>> GetArticleListBySubcategory(string subcategory, int limit)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("@Subcategory", subcategory);
+            parameters.Add("@Limit", limit);
+
+            return await _db.LoadDataList<BaseArticleModel, DynamicParameters>("dbo.Articles_GetArticleListBySubcategory", parameters);
+        }
+
+        public async Task<Result<ArticleModel, ValidationFailed>> GetArticleById(int articleId)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("@ArticleId", articleId);
+
+            return await _db.LoadDataObject<ArticleModel, DynamicParameters>("dbo.Articles_GetArticleById", parameters);
         }
         public async Task<Result<int?, ValidationFailed>> AddNewArticle(ArticleModel article)
         {

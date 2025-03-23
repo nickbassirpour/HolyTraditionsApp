@@ -73,6 +73,8 @@
     <Build Include="dbo\Tables\RelatedArticleListType.sql" />
     <Build Include="dbo\Tables\Series_Articles.sql" />
     <Build Include="dbo\Stored Procedures\Articles_GetArticleListByCategory.sql" />
+    <Build Include="dbo\Stored Procedures\Articles_GetArticleListBySubcategory.sql" />
+    <Build Include="dbo\Stored Procedures\Articles_GetArticleById.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Database.publish.xml" />

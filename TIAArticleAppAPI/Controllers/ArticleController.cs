@@ -61,5 +61,53 @@ namespace TIAArticleAppAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [AllowAnonymous]
+        [HttpGet("get_articles_by_subcategory")]
+        public async Task<IActionResult> GetArticlesBySubcategory(string subcategory, int limit)
+        {
+            try
+            {
+                var response = await _service.GetArticleListBySubcategory(subcategory, limit);
+                return response.Match<IActionResult>(
+                    success =>
+                    {
+                        return Ok(success);
+                    },
+                    error =>
+                    {
+                        return StatusCode(500, "Error finding articles.");
+                    }
+                );
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpGet("get_article_by_id")]
+        public async Task<IActionResult> GetArticleById(int articleId)
+        {
+            try
+            {
+                var response = await _service.GetArticleById(articleId);
+                return response.Match<IActionResult>(
+                    success =>
+                    {
+                        return Ok(success);
+                    },
+                    error =>
+                    {
+                        return StatusCode(500, "Error finding article.");
+                    }
+                );
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

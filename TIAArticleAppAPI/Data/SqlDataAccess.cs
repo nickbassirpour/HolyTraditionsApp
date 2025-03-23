@@ -21,7 +21,7 @@ namespace TIAArticleAppAPI.Data
                 return rows;
             }
         }
-        public T LoadDataObject<T, U>(string sqlStatement, U parameters)
+        public async Task<T> LoadDataObject<T, U>(string sqlStatement, U parameters)
         {
             using (IDbConnection connection = new SqlConnection(_connectionString))
             {
