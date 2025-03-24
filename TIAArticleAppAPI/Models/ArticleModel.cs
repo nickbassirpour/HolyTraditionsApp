@@ -14,12 +14,13 @@ namespace TIAArticleAppAPI.Models
         public string? SeriesNumber { get; set; }
         public List<string?> Author { get; set; }
         [Required]
-        public string AuthorJson { get; set; }
+        public string? AuthorJson { get; set; }
         public string BodyHtml { get; set; }
         [Required]
         public string BodyInnerText { get; set; }
         public string? Date { get; set; }
         public List<BaseArticleModel>? RelatedArticles { get; set; }
+        public string? RelatedArticlesJson { get; set; }
 
     }
 }

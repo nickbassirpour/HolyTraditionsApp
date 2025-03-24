@@ -46,9 +46,8 @@ namespace TIAArticleAppAPI.Services
 
             var article = await _db.LoadDataObject<ArticleModel, DynamicParameters>("dbo.Articles_GetArticleById", parameters);
 
-            article.Author = string.IsNullOrEmpty(article.AuthorJson)
-            ? new List<string?>()
-            : JsonSerializer.Deserialize<List<string?>>(article.AuthorJson) ?? new List<string?>();
+            article.Author = DeserializeList<string>(article.AuthorJson);
+            article.RelatedArticles = DeserializeList<BaseArticleModel>(article.RelatedArticlesJson);
 
             return article;
         }
@@ -165,6 +164,13 @@ namespace TIAArticleAppAPI.Services
                 relatedArticlesTable.Rows.Add(relatedArticle.Title, relatedArticle.Url);
             }
             return relatedArticlesTable;
+        }
+
+        private static List<T> DeserializeList<T>(string json)
+        {
+            return string.IsNullOrEmpty(json)
+            ? new List<T>()
+            : JsonSerializer.Deserialize<List<T>>(json) ?? new List<T>();
         }
     }
 }

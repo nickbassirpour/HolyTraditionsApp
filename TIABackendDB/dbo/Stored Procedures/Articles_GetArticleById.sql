@@ -7,19 +7,20 @@ BEGIN
 		'[' + STRING_AGG(QUOTENAME(au.Name, '"'), ', ') + ']' as authorJson,
 		c.[Name] as "category",
 		sc.[Name] as "subCategory",
-		(
+		COALESCE((
 			SELECT
-				Url as ["url"],
-				Title as ["title"],
-				ThumbnailUrl as ["thumbnailUrl"],
-				Category as ["category"]
+				Url,
+				Title,
+				ThumbnailUrl,
+				Category,
+				Description
 			FROM 
 				RelatedArticle
 			WHERE
 				RelatedArticle.ArticleId = @ArticleId
 			FOR
 				JSON PATH
-		) as relatedArticles
+		), '[]') as relatedArticlesJson
 	FROM
 		Article a
 	INNER JOIN
