@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[Articles_AddNewArticle]
+﻿CREATE PROCEDURE [dbo].[Article_AddNewArticle]
 	@SubCategory varchar(100),
 	@Title varchar(200),
 	@Url varchar(300),

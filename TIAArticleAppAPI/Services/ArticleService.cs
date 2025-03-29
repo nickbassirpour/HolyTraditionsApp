@@ -17,17 +17,14 @@ namespace TIAArticleAppAPI.Services
         {
             _db = db;
         }
-        public async Task<ArticleModel> GetArticleByUrl(string url)
-        {
-            return await _db.LoadDataObject<ArticleModel, dynamic>("dbo.Articles_GetArticleByUrl", new { url });
-        }
+
         public async Task<Result<List<BaseArticleModel>, ValidationFailed>> GetArticleListByCategory(string category, int limit)
         {
             var parameters = new DynamicParameters();
             parameters.Add("@Category", category);
             parameters.Add("@Limit", limit);
 
-            return await _db.LoadDataList<BaseArticleModel, DynamicParameters>("dbo.Articles_GetArticleListByCategory", parameters);
+            return await _db.LoadDataList<BaseArticleModel, DynamicParameters>("dbo.Article_GetArticleListByCategory", parameters);
         }
 
         public async Task<Result<List<BaseArticleModel>, ValidationFailed>> GetArticleListBySubcategory(string subcategory, int limit)
@@ -36,7 +33,7 @@ namespace TIAArticleAppAPI.Services
             parameters.Add("@Subcategory", subcategory);
             parameters.Add("@Limit", limit);
 
-            return await _db.LoadDataList<BaseArticleModel, DynamicParameters>("dbo.Articles_GetArticleListBySubcategory", parameters);
+            return await _db.LoadDataList<BaseArticleModel, DynamicParameters>("dbo.Article_GetArticleListBySubcategory", parameters);
         }
 
         public async Task<Result<ArticleModel, ValidationFailed>> GetArticleById(int articleId)
@@ -44,12 +41,30 @@ namespace TIAArticleAppAPI.Services
             var parameters = new DynamicParameters();
             parameters.Add("@ArticleId", articleId);
 
-            var article = await _db.LoadDataObject<ArticleModel, DynamicParameters>("dbo.Articles_GetArticleById", parameters);
+            var article = await _db.LoadDataObject<ArticleModel, DynamicParameters>("dbo.Article_GetArticleById", parameters);
 
             article.Author = DeserializeList<string>(article.AuthorJson);
             article.RelatedArticles = DeserializeList<BaseArticleModel>(article.RelatedArticlesJson);
 
             return article;
+        }
+
+        public async Task<Result<ArticleModel, ValidationFailed>> GetArticleByUrl(string articleUrl)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("@Url", articleUrl);
+
+            var article = await _db.LoadDataObject<ArticleModel, DynamicParameters>("dbo.Article_GetArticleByUrl", parameters);
+
+            article.Author = DeserializeList<string>(article.AuthorJson);
+            article.RelatedArticles = DeserializeList<BaseArticleModel>(article.RelatedArticlesJson);
+
+            return article;
+        }
+
+        public async Task<Result<List<string>, ValidationFailed>> GetAllAuthors()
+        {
+            return await _db.LoadDataList<string>("dbo.Author_GetAll");
         }
         public async Task<Result<int?, ValidationFailed>> AddNewArticle(ArticleModel article)
         {
@@ -117,7 +132,7 @@ namespace TIAArticleAppAPI.Services
 
             try
             {
-                await _db.SaveData<DynamicParameters>("dbo.Articles_AddNewArticle", parameters);
+                await _db.SaveData<DynamicParameters>("dbo.Article_AddNewArticle", parameters);
             }
             catch (SqlException ex)
             {

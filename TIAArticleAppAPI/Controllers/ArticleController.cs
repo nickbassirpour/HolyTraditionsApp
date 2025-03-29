@@ -109,5 +109,43 @@ namespace TIAArticleAppAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [AllowAnonymous]
+        [HttpGet("get_article_by_url")]
+        public async Task<IActionResult> GetArticleByUrl(string articleUrl)
+        {
+            try
+            {
+                var response = await _service.GetArticleByUrl(articleUrl);
+                return response.Match<IActionResult>
+                    (
+                    success => { return Ok(success);},
+                    error => { return StatusCode(500, "Error finding article.");}
+                    );
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpGet("get_all_authors")]
+        public async Task<IActionResult> GetAllAuthors()
+        {
+            try
+            {
+                var response = await _service.GetAllAuthors();
+                return response.Match<IActionResult>
+                    (
+                    success => { return Ok(success); },
+                    error => { return StatusCode(500, "Error getting authors."); }
+                    );
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

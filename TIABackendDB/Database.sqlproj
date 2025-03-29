@@ -64,7 +64,7 @@
     <Build Include="dbo\Tables\Article.sql" />
     <Build Include="dbo\Tables\SubCategory.sql" />
     <Build Include="dbo\Tables\Category.sql" />
-    <Build Include="dbo\Stored Procedures\Articles_AddNewArticle.sql" />
+    <Build Include="dbo\Stored Procedures\Article_AddNewArticle.sql" />
     <Build Include="dbo\Tables\Series.sql" />
     <Build Include="dbo\Tables\Author.sql" />
     <Build Include="dbo\Tables\Author_Article.sql" />
@@ -72,9 +72,11 @@
     <Build Include="dbo\Tables\RelatedArticle.sql" />
     <Build Include="dbo\Tables\RelatedArticleListType.sql" />
     <Build Include="dbo\Tables\Series_Articles.sql" />
-    <Build Include="dbo\Stored Procedures\Articles_GetArticleListByCategory.sql" />
-    <Build Include="dbo\Stored Procedures\Articles_GetArticleListBySubcategory.sql" />
-    <Build Include="dbo\Stored Procedures\Articles_GetArticleById.sql" />
+    <Build Include="dbo\Stored Procedures\Article_GetArticleListByCategory.sql" />
+    <Build Include="dbo\Stored Procedures\Article_GetArticleListBySubcategory.sql" />
+    <Build Include="dbo\Stored Procedures\Article_GetArticleById.sql" />
+    <Build Include="dbo\Stored Procedures\Article_GetArticleByUrl.sql" />
+    <Build Include="dbo\Stored Procedures\Author_GetAll.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Database.publish.xml" />

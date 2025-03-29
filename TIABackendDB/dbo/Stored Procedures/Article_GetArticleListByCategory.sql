@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[Articles_GetArticleListByCategory]
+﻿CREATE PROCEDURE [dbo].[Article_GetArticleListByCategory]
 
 	@Category VARCHAR(100),
 	@Limit int

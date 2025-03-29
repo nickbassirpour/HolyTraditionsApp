@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[Articles_GetArticleById]
+﻿CREATE PROCEDURE [dbo].[Article_GetArticleById]
 	@ArticleId int
 AS
 BEGIN

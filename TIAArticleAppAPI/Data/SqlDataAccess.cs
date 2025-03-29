@@ -21,6 +21,16 @@ namespace TIAArticleAppAPI.Data
                 return rows;
             }
         }
+
+        public async Task<List<T>> LoadDataList<T>(string sqlStatement)
+        {
+            using (IDbConnection connection = new SqlConnection(_connectionString))
+            {
+                List<T> rows = connection.Query<T>(sqlStatement, commandType: CommandType.StoredProcedure).ToList();
+                return rows;
+            }
+        }
+
         public async Task<T> LoadDataObject<T, U>(string sqlStatement, U parameters)
         {
             using (IDbConnection connection = new SqlConnection(_connectionString))
