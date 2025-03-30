@@ -77,6 +77,7 @@
     <Build Include="dbo\Stored Procedures\Article_GetArticleById.sql" />
     <Build Include="dbo\Stored Procedures\Article_GetArticleByUrl.sql" />
     <Build Include="dbo\Stored Procedures\Author_GetAll.sql" />
+    <Build Include="dbo\Stored Procedures\Category_GetAll.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Database.publish.xml" />

@@ -11,5 +11,6 @@ namespace TIAArticleAppAPI.Services
         Task<Result<List<BaseArticleModel>, ValidationFailed>> GetArticleListBySubcategory(string subcategory, int limit);
         Task<Result<ArticleModel, ValidationFailed>> GetArticleById(int articleId);
         Task<Result<List<string>, ValidationFailed>> GetAllAuthors();
+        Task<Result<List<string>, ValidationFailed>> GetAllCategories();
     }
 }

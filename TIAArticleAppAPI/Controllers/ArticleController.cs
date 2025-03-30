@@ -147,5 +147,24 @@ namespace TIAArticleAppAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [AllowAnonymous]
+        [HttpGet("get_all_categories")]
+        public async Task<IActionResult> GetAllCategories()
+        {
+            try
+            {
+                var response = await _service.GetAllCategories();
+                return response.Match<IActionResult>
+                    (
+                    success => { return Ok(success); },
+                    error => { return StatusCode(500, "Error getting categories."); }
+                    );
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }
