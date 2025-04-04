@@ -185,5 +185,29 @@ namespace TIAArticleAppAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [AllowAnonymous]
+        [HttpGet("delete_article_by_id")]
+        public async Task<IActionResult> DeleteArticleById(int articleId)
+        {
+            try
+            {
+                var response = await _service.DeleteArticleById(articleId);
+                return response.Match<IActionResult>(
+                    success =>
+                    {
+                        return Ok($"Successfully deleted article {success.Item2} using the id {success.Item1}");
+                    },
+                    error =>
+                    {
+                        return StatusCode(500, "Error deleting article.");
+                    }
+                );
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

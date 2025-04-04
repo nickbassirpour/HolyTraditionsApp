@@ -75,6 +75,15 @@ namespace TIAArticleAppAPI.Services
         {
             return await _db.LoadDataList<string>("SubCategory_GetAll");
         }
+        public async Task<Result<(int, string), ValidationFailed>> DeleteArticleById(int articleId)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("@ArticleId", articleId);
+
+            var article = await _db.LoadDataObject<(int Id, string Title), DynamicParameters>("dbo.Article_DeleteArticleById", parameters);
+
+            return article;
+        }
 
         public async Task<Result<int?, ValidationFailed>> AddNewArticle(ArticleModel article)
         {

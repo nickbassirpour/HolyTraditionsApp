@@ -2,5 +2,13 @@
 	@ArticleId int
 AS
 BEGIN
-	DELETE FROM Article WHERE Id = @ArticleId;
+	SET NOCOUNT ON;
+
+    DECLARE @DeletedArticle TABLE (Id INT, Title NVARCHAR(300));
+
+    DELETE FROM Article
+    OUTPUT deleted.Id, deleted.Title INTO @DeletedArticle
+    WHERE Id = @ArticleId;
+
+    SELECT * FROM @DeletedArticle;
 END

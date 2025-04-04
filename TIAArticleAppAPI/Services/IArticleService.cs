@@ -13,5 +13,6 @@ namespace TIAArticleAppAPI.Services
         Task<Result<List<string>, ValidationFailed>> GetAllAuthors();
         Task<Result<List<string>, ValidationFailed>> GetAllCategories();
         Task<Result<List<string>, ValidationFailed>> GetAllSubCategories();
+        Task<Result<(int, string), ValidationFailed>> DeleteArticleById(int articleId);
     }
 }
