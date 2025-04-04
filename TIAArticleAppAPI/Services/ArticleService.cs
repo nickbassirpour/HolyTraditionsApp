@@ -71,6 +71,11 @@ namespace TIAArticleAppAPI.Services
         {
             return await _db.LoadDataList<string>("Category_GetAll");
         }
+        public async Task<Result<List<string>, ValidationFailed>> GetAllSubCategories()
+        {
+            return await _db.LoadDataList<string>("SubCategory_GetAll");
+        }
+
         public async Task<Result<int?, ValidationFailed>> AddNewArticle(ArticleModel article)
         {
             // Log each property before adding to parameters
