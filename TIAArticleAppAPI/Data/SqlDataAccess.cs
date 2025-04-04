@@ -47,5 +47,13 @@ namespace TIAArticleAppAPI.Data
                 await connection.ExecuteAsync(sqlStatement, parameters, commandType: CommandType.StoredProcedure);
             }
         }
+
+        public async Task<IEnumerable<T>> QueryRawSql<T, U>(string sqlStatement, U parameters)
+        {
+            using (IDbConnection connection = new SqlConnection(_connectionString))
+            {
+                return await connection.QueryAsync<T>(sqlStatement, parameters, commandType: CommandType.Text);
+            }
+        }
     }
 }

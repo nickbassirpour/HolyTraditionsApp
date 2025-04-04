@@ -209,5 +209,21 @@ namespace TIAArticleAppAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [AllowAnonymous]
+        [HttpGet("search_articles")]
+        public async Task<IActionResult> SearchArticles(int? categoryId, int? subCategoryId, int? authorId, string searchTerm)
+        {
+            try
+            {
+                IEnumerable<ArticleModel> articles = await _service.SearchArticles(categoryId, subCategoryId, authorId, searchTerm);
+
+                return Ok(articles);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
+        }
     }
 }

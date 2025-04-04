@@ -56,8 +56,8 @@ namespace TIAArticleAppAPI.Services
 
             var article = await _db.LoadDataObject<ArticleModel, DynamicParameters>("dbo.Article_GetArticleByUrl", parameters);
 
-            article.Author = DeserializeList<string>(article.AuthorJson);
-            article.RelatedArticles = DeserializeList<BaseArticleModel>(article.RelatedArticlesJson);
+            if (article.AuthorJson != null) article.Author = DeserializeList<string?>(article.AuthorJson);
+            if (article.RelatedArticlesJson != null) article.RelatedArticles = DeserializeList<BaseArticleModel>(article.RelatedArticlesJson);
 
             return article;
         }
@@ -83,6 +83,62 @@ namespace TIAArticleAppAPI.Services
             var article = await _db.LoadDataObject<(int Id, string Title), DynamicParameters>("dbo.Article_DeleteArticleById", parameters);
 
             return article;
+        }
+
+        public async Task<IEnumerable<ArticleModel>> SearchArticles(int? categoryId = null, int? subCategoryId = null, int? authorId = null, string searchTerm = null)
+        {
+            string sql = @"
+                    SELECT DISTINCT 
+                    a.*,
+                    sc.Name as SubCategory,
+                    c.Name as Category,
+                    '[' + STRING_AGG(QUOTENAME(au.Name, '""'), ', ') + ']' as authorJson
+                    FROM Article a 
+                    INNER JOIN SubCategory sc on a.SubCategoryId = sc.Id
+                    INNER JOIN Category c on sc.CategoryId = c.Id
+                    INNER JOIN Author_Article aa on a.Id = aa.ArticleId
+                    INNER JOIN Author au ON aa.AuthorId = au.id
+                    WHERE 1 = 1";
+
+            DynamicParameters parameters = new DynamicParameters();
+
+            if (categoryId != null)
+            {
+                sql += " AND c.Id = @CategoryId";
+                parameters.Add("CategoryId", categoryId);
+            }
+
+            if (subCategoryId != null)
+            {
+                sql += " AND sc.Id = @SubCategoryId";
+                parameters.Add("SubCategoryId", categoryId);
+            }
+
+            if (authorId != null)
+            {
+                sql += " AND au.Id = @AuthorId";
+                parameters.Add("AuthorId", authorId);
+            }
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                sql += " AND (a.Title LIKE @SearchTerm OR a.BodyInnerText LIKE @SearchTerm)";
+                parameters.Add("SearchTerm", $"%{searchTerm}%");
+            }
+
+            sql += " GROUP BY a.Id, a.Title, a.Url, a.BodyHtml, a.BodyInnerText, a.SubCategoryId, a.Description, a.ThumbnailURL, c.[Name], sc.[Name], a.[Date]";
+
+            IEnumerable<ArticleModel> articles = await _db.QueryRawSql<ArticleModel, DynamicParameters>(sql, parameters);
+
+            foreach (ArticleModel article in articles)
+            {
+                if (article.AuthorJson != null)
+                {
+                    article.Author = DeserializeList<string?>(article.AuthorJson);
+                }
+            }
+
+            return articles;
         }
 
         public async Task<Result<int?, ValidationFailed>> AddNewArticle(ArticleModel article)
