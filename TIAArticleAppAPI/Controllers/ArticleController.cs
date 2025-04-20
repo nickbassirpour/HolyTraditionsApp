@@ -22,12 +22,13 @@ namespace TIAArticleAppAPI.Controllers
             {
                 var response = await _service.AddNewArticle(article);
                 return response.Match<IActionResult>(
-                    success =>
-                    {
-                        return StatusCode(201, new { id = success});
-                    },
+                    success => StatusCode(201, new { id = success}),
                     error =>
                     {
+                        if (error.errorMessage.Contains("already exists"))
+                        {
+                            return Conflict("Article already exists, skipping.");
+                        }
                         return StatusCode(500, "Error adding article.");
                     }
                 );

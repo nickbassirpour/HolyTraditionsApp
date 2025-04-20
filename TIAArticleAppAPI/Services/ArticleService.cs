@@ -143,20 +143,8 @@ namespace TIAArticleAppAPI.Services
 
         public async Task<Result<int?, ValidationFailed>> AddNewArticle(ArticleModel article)
         {
-            // Log each property before adding to parameters
-            Debug.WriteLine($"SubCategory: {article.SubCategory}");
-            Debug.WriteLine($"Title: {article.Title}");
-            Debug.WriteLine($"Url: {article.Url}");
-            Debug.WriteLine($"Category: {article.Category}");
-            Debug.WriteLine($"Description: {article.Description}");
-            Debug.WriteLine($"ThumbnailUrl: {article.ThumbnailURL}");
-            Debug.WriteLine($"Series: {article.Series}");
-            Debug.WriteLine($"SeriesNumber: {article.SeriesNumber}");
-            Debug.WriteLine($"BodyHtml: {article.BodyHtml != null}");
-            Debug.WriteLine($"BodyInnerText: {article.BodyInnerText != null}");
-            Debug.WriteLine($"Date: {article.Date}");
-
             var parameters = new DynamicParameters();
+
             parameters.Add("@SubCategory", article.SubCategory);
             parameters.Add("@Title", article.Title);
             parameters.Add("@Url", article.Url);
@@ -165,42 +153,31 @@ namespace TIAArticleAppAPI.Services
             parameters.Add("@ThumbnailUrl", article.ThumbnailURL);
             parameters.Add("@Series", article.Series);
             parameters.Add("@SeriesNumber", article.SeriesNumber);
-
-            if (article.Author?.Any() == true)
-            {
-                DataTable authorTable = ConvertAuthorsToDataTable(article.Author);
-                parameters.Add("@Authors", authorTable.AsTableValuedParameter("AuthorListType"));
-                Debug.WriteLine("Authors:");
-                foreach (var author in article.Author)
-                {
-                    Debug.WriteLine($" - {author}");
-                }
-            }
-            else
-            {
-                parameters.Add("@Authors", new DataTable().AsTableValuedParameter("AuthorListType"));
-                Debug.WriteLine("Authors: NULL or Empty");
-            }
-
             parameters.Add("@BodyHtml", article.BodyHtml);
             parameters.Add("@BodyInnerText", article.BodyInnerText);
             parameters.Add("@Date", article.Date);
 
-
-            if (article.RelatedArticles?.Any() == true)
+            DataTable emptyAuthorTable = CreateDataTable(["Name"]);
+            if (article.Author?.Any() == true)
             {
-                DataTable relatedArticleTable = ConvertRelatedArticlesToDataTable(article.RelatedArticles);
-                parameters.Add("@RelatedArticles", relatedArticleTable.AsTableValuedParameter("RelatedArticleListType"));
-                Debug.WriteLine("Related Articles:");
-                foreach (var related in article.RelatedArticles)
-                {
-                    Debug.WriteLine($" - {related.Url}, {related.Title}");
-                }
+                DataTable filledAuthorTable = AddAuthorsToTable(emptyAuthorTable, article.Author);
+                parameters.Add("@Authors", filledAuthorTable.AsTableValuedParameter("AuthorListType"));
             }
             else
             {
-                parameters.Add("@RelatedArticles", new DataTable().AsTableValuedParameter("RelatedArticleListType"));
-                Debug.WriteLine("Related Articles: NULL or Empty");
+                parameters.Add("@Authors", emptyAuthorTable.AsTableValuedParameter("AuthorListType"));
+            }
+
+
+            DataTable emptyRelatedArticlesTable = CreateDataTable(["Url", "Title"]);
+            if (article.RelatedArticles?.Any() == true)
+            {
+                DataTable relatedArticleTable = AddRelatedArticlesToTable(emptyRelatedArticlesTable, article.RelatedArticles);
+                parameters.Add("@RelatedArticles", relatedArticleTable.AsTableValuedParameter("RelatedArticleListType"));
+            }
+            else
+            {
+                parameters.Add("@RelatedArticles", emptyRelatedArticlesTable.AsTableValuedParameter("RelatedArticleListType"));
             }
 
             parameters.Add("@NewArticleId", dbType: DbType.Int32, direction: ParameterDirection.Output);
@@ -211,16 +188,18 @@ namespace TIAArticleAppAPI.Services
             }
             catch (SqlException ex)
             {
-                Debug.WriteLine($"SQL Exception: {ex.Message}");
-                Debug.WriteLine($"Error Code: {ex.Number}");
-                foreach (SqlError error in ex.Errors)
+                if (ex.Message.Contains("already exists"))
                 {
-                    Debug.WriteLine($"Error: {error.Number} - {error.Message}");
+                    return new ValidationFailed("Article already exists.");
                 }
+
+                Debug.WriteLine($"SQL Exception: {ex.Message}");
+                return new ValidationFailed("Unhandled SQL error.");
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"General Exception: {ex.Message}");
+                return new ValidationFailed("Unhandled exception.");
             }
 
             int? newArticleId = parameters.Get<int?>("@NewArticleId");
@@ -230,25 +209,16 @@ namespace TIAArticleAppAPI.Services
             return newArticleId.Value;
         }
 
-        private static DataTable? ConvertAuthorsToDataTable(List<String> authors)
+        private static DataTable? AddAuthorsToTable(DataTable authorTable, List<string> authors)
         {
-            if (authors == null) return null;
-            DataTable authorTable = new DataTable();
-            authorTable.Columns.Add("Name", typeof(string));
-
             foreach (var author in authors)
             {
                 authorTable.Rows.Add(author);
             }
             return authorTable;
         }
-        private static DataTable? ConvertRelatedArticlesToDataTable(List<BaseArticleModel> relatedArticles)
+        private static DataTable? AddRelatedArticlesToTable(DataTable relatedArticlesTable, List<BaseArticleModel> relatedArticles)
         {
-            if (relatedArticles == null) return null;
-            DataTable relatedArticlesTable = new DataTable();
-            relatedArticlesTable.Columns.Add("Title", typeof(string));
-            relatedArticlesTable.Columns.Add("Url", typeof(string));
-
             foreach (var relatedArticle in relatedArticles)
             {
                 relatedArticlesTable.Rows.Add(relatedArticle.Title, relatedArticle.Url);
@@ -261,6 +231,16 @@ namespace TIAArticleAppAPI.Services
             return string.IsNullOrEmpty(json)
             ? new List<T>()
             : JsonSerializer.Deserialize<List<T>>(json) ?? new List<T>();
+        }
+
+        private static DataTable CreateDataTable(List<string> columns)
+        {
+            DataTable table = new DataTable();
+            foreach (string column in columns)
+            {
+                table.Columns.Add(column, typeof(string));
+            }
+            return table;
         }
     }
 }
